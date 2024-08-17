@@ -1,0 +1,31 @@
+Behaviours:
+View all collections
+View one collection
+Make collection
+Delete collection
+
+All private
+
+VIEW ALL COLLECTIONS
+Input: X
+Output: All collections associated with a user
+Errors: ?
+
+VIEW ONE COLLECTION
+Input: Collection in the request param
+Output: Contents in the collection
+Errors:
+1) Collection does not exist.
+
+MAKE COLLECTION
+Input: Collection name
+Output: Collection added to user.collections
+Errors:
+1) Collection name field not filled
+2) Duplicate collection
+
+DELETE COLLECTION
+Input: Collection name
+Output: Collection deleted / contents can be preserved or deleted.
+Errors:
+1) Collection doesn't exist.

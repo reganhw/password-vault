@@ -1,0 +1,31 @@
+USERS
+
+Template: {email, master password, collections}
+
+Behaviours: {register, login, update account, logout, view self, delete account}
+
+REGISTER - Public
+Input: {email, master password}
+Output: User created - {email, hashed password, collections}
+Errors:
+1) Missing fields.
+2) Email already registered.
+
+LOGIN - Public
+Input: {email, master password}
+Output: Token
+Errors:
+1) Missing fields.
+2) Email, password mismatch
+
+VIEW SELF - Private
+Input: Token
+Output: {email}
+Errors:
+1) Someone trying to view another user.
+
+DELETE ACCOUNT -
+Errors:
+1) Someone trying to delete another user.
+Considerations:
+1) Delete all associated content.
