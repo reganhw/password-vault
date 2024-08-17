@@ -10,15 +10,15 @@ router.post("/login",(req,res)=>{
     res.status(200).json({message:"User logged in."});
 })
 
-router.get("/:id", (req,res) =>{
+router.get("/account/:id", (req,res) =>{
     res.status(200).json({message:`User ${req.params.id}.`});
 })
 
-router.put("/:id", (req, res)=>{
+router.put("/account/:id", (req, res)=>{
     res.status(200).json({message:`User ${req.params.id} updated.`});
 })
 
-router.delete("/:id", (req, res)=>{
+router.delete("/account/:id", (req, res)=>{
     res.status(200).json({message:`User ${req.params.id} deleted.`});
 })
 module.exports = router;
