@@ -43,24 +43,24 @@ request(app).delete(`/api/content?id=${id}`)
 request(app).get('/api/content?type=foo')
 .expect(400)
 .end(err=> {
-if (err) throw new Error(`No 401 for GET api/content?type=foo.` );
+if (err) throw new Error(`No 400 for GET api/content?type=foo.` );
 });
 
 request(app).put('/api/content')
-.expect(401)
+.expect(400)
 .end(err=> {
-if (err) throw new Error(`No 401 for PUT api/content.` );
+if (err) throw new Error(`No 400 for PUT api/content.` );
 });
 
 request(app).put('/api/content?id=')
-.expect(401)
+.expect(400)
 .end(err=> {
-if (err) throw new Error(`No 401 for PUT api/content?id=.` );
+if (err) throw new Error(`No 400 for PUT api/content?id=.` );
 });
 
 request(app).delete('/api/content')
-.expect(401)
+.expect(400)
 .end(err=> {
-if (err) throw new Error(`No 401 for DELETE api/content.` );
+if (err) throw new Error(`No 400 for DELETE api/content.` );
 });
 

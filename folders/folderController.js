@@ -61,7 +61,8 @@ const deleteFolder = (req,res)=>{
                  message: `Folder ${folderName} was deleted and its contents were migrated.` 
                 });
         default:
-            return res.status(400).json({message: "Invalid action specified."});
+            res.status(400);
+            throw new Error("Invalid action specified.");
     }
 }
 

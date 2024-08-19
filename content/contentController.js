@@ -15,7 +15,8 @@ const getContent = (req,res)=>{
 }
 const validType = (type, res) =>{
     if (!(type=="login"||type=="card"||type=="note")){
-        return res.status(400).json({message:"Invalid content type."});
+        res.status(400);
+        throw new Error("Invalid content type.");
     }
 }
 
@@ -25,14 +26,16 @@ const makeContent =(req,res)=>{
 
 const updateContent = (req,res)=>{
     if (!req.query.id){
-        return res.status(401).json({message:"Please provide the ID of the content to update."});
+        res.status(400);
+        throw new Error("Please provide the ID of the content to update.");
     }
     return res.status(200).json({message:`Update content with ID ${req.query.id}.`});
 }
 
 const deleteContent =(req,res)=>{
     if (!req.query.id){
-        return res.status(401).json({message:"Please provide the ID of the content to delete."});
+        res.status(400);
+        throw new Error("Please provide the ID of the content to delete.");
     }
     return res.status(200).json({message:`Delete content with ID ${req.query.id}.`});
 }

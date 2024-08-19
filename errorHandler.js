@@ -3,7 +3,7 @@ const errorHandler = (err,req,res,next)=>{
     switch (statusCode) {
         case 400:
             return res.json({
-                title: "Validation Failed.", 
+                title: "Bad request.", 
                 message:err.message, 
                 stackTrace:err.stack});
         case 401:
