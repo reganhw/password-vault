@@ -5,24 +5,18 @@ const getContent = (req,res)=>{
     }
 
     // If there is no ID but there is a type.
-    if(req.query.type){
-        return getType(req.query.type,res);
+    const type = req.query.type;
+    if(type){
+        validType(type, res);
+        return res.status(200).json({message: `Get all ${type}s.`});
     }
     // If there is no ID and no type. Note: Didn't consider the case where there's some other parameter.
     return res.status(200).json({message:"Get all content."});
 }
-
-const getType =(reqType,res)=>{
-    switch (reqType){          
-            
-        case "logins":
-            return res.status(200).json({message:"Get all logins."});
-        case "notes":
-            return res.status(200).json({message: "Get all notes."});
-        default:
-            return res.status(401).json({message: "Invalid content type."});
+const validType = (type, res) =>{
+    if (!(type=="login"||type=="card"||type=="note")){
+        return res.status(400).json({message:"Invalid content type."});
     }
-
 }
 
 const makeContent =(req,res)=>{
@@ -43,4 +37,4 @@ const deleteContent =(req,res)=>{
     return res.status(200).json({message:`Delete content with ID ${req.query.id}.`});
 }
 
-module.exports = {getContent, makeContent, updateContent, deleteContent};
+module.exports = {getContent, validType, makeContent, updateContent, deleteContent};

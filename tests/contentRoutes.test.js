@@ -5,7 +5,7 @@ const id = "1";
 // ----------------------------VALID REQUESTS------------------------
 
 //GET
-const getPaths = ['', '?type=logins', '?type=notes', `?id=${id}`, `?id=${id}&type=notes` ];
+const getPaths = ['', '?type=login', '?type=note', `?id=${id}`, `?id=${id}&type=note` ];
 const getMessages = ['Get all content.', 'Get all logins.', 'Get all notes.', 
     `Get content with ID ${id}.`, `Get content with ID ${id}.`];
 
@@ -41,7 +41,7 @@ request(app).delete(`/api/content?id=${id}`)
 //-----------------------------------INVALID REQUESTS------------------------------
 
 request(app).get('/api/content?type=foo')
-.expect(401)
+.expect(400)
 .end(err=> {
 if (err) throw new Error(`No 401 for GET api/content?type=foo.` );
 });
