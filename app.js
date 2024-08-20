@@ -1,6 +1,9 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const errorHandler = require("./errorHandler");
+const connectDb = require("./connectDb");
+
+connectDb();
 const app = express();
 const port = parseInt(process.env.PORT, 10) || 3000;
 
