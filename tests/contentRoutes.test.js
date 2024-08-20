@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = "http://localhost:3000";
+const app = require("../app");
 const id = "1";
 
 // ----------------------------VALID REQUESTS------------------------

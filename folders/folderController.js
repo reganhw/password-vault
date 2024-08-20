@@ -57,9 +57,7 @@ const deleteFolder = (req,res)=>{
         case "delete-all":
             return res.status(200).json({ message: `Folder ${folderName} and its contents have been deleted.`});
         case "preserve-content":
-            return res.status(200).json({
-                 message: `Folder ${folderName} was deleted and its contents were migrated.` 
-                });
+            return res.status(200).json({message: `Folder ${folderName} was deleted and its contents were migrated.`});
         default:
             res.status(400);
             throw new Error("Invalid action specified.");

@@ -12,6 +12,13 @@ const makeUser = (req,res)=>{
 }
 
 const loginUser = (req,res)=>{
+    const {email, password}=req.body;
+
+    // See if all fields are there.
+    if(!email || !password){
+        res.status(400);
+        throw new Error("All fields are required.");
+    }
     return res.status(200).json({message:"User logged in."});
 }
 

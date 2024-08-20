@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = "http://localhost:3000";
+const app = require("../app");
 const async = require('async');
 const folderName = "myFolder";
 const id = "1";
@@ -47,6 +47,7 @@ it('DELETE /api/folders/folderName', function(done) {
         .expect(200, cb),
     ], done);
 });
+
 /*
 const statuses = [200,201];
 for (let i = 0; i<2;i++){
