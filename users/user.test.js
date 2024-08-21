@@ -34,4 +34,37 @@ it('Test for /api/users/register', function(done) {
    
     ], done);
 });
+
 */
+let accessToken;
+describe('VALID SIGN-IN', function() {
+    it('responds with an access token', async function() {
+      const path = '/api/users/signin';
+      const res =await request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(200)
+     .then(res => {
+           accessToken = res.body.accessToken; // set access token
+        });
+    });
+  });
+
+  /*
+  describe('INVALID SIGN-IN', function() {
+    it('throws appropriate errors', function(done) {
+      const path = '/api/users/signin';
+      async.series([
+        // Missing fields
+        cb => request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400, cb),
+        cb => request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400, cb),
+        // Email and Password don't match
+        cb => request(app).post(path).send({email:"one@gmail.com",password:"12345"}).expect('Content-Type', /json/).expect(401, cb),
+        // Invalid requests(404)
+        cb => request(app).get(path).expect(404, cb),
+        cb => request(app).put(path).expect(404, cb),
+        cb => request(app).delete(path).expect(404, cb),
+        
+   
+    ], done);
+    });
+  });
+  */
+ 
