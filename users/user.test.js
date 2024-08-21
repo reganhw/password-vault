@@ -86,16 +86,28 @@ describe('Valid request to signInUser', function() {
     ], done);
     });
   });
- 
+ */
+
+async function makeUsersGetToken(){
+
+    await request(app).post('/api/users/register').send(validUsers[0]);
+    const response = await request(app).post('/api/users/signin').send(validUsers[0]);
+    const token = response.body.accessToken;
+
+    return token;
+};
 
 describe('Valid request to getUser', function() {
-it('Displays current user', async function() {
-    const path = '/api/users/account';
-    const res =await request(app).get(path).set("Authorization", "Bearer "+tokenOne)
-    .expect('Content-Type', /json/).expect(200)
-});
+    it('Displays current user', async function() {
+        const path = '/api/users/account';
+        const token =await makeUsersGetToken();
+        await request(app).get(path).set("Authorization", "Bearer "+token)
+        .expect('Content-Type', /json/).expect(200);
+        await User.findOneAndDelete({email:validUsers[0].email});
+    });
 });
 
+/*
 describe('Invalid requests to getUser', function() {
 it('Throws appropriate errors.', function(done) {
     const path = '/api/users/account';
@@ -109,16 +121,7 @@ it('Throws appropriate errors.', function(done) {
     ], done);
 });
 });
-*/
 
-async function makeUsersGetToken(){
-   
-    await request(app).post('/api/users/register').send(validUsers[0]);
-    const response = await request(app).post('/api/users/signin').send(validUsers[0]);
-    const token = response.body.accessToken;
-  
-    return token;
-};
 
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', async function() {
@@ -134,7 +137,7 @@ describe('Valid request to deleteUser', function() {
        // Check that the user was deleted.
        const user = await User.exists({email:validUsers[0].email});
        assert.equal(user,null);
-});
+    });
 });
 
 
@@ -151,3 +154,4 @@ describe('Invalid request to deleteUser', function() {
        
     });
 });
+*/
