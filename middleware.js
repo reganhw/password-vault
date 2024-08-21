@@ -55,7 +55,6 @@ const validToken = asyncHandler(async(req,res,next)=>{
             if(err){
                 return  res.status(401).json({ message: "Not authorised." });
             }
-            console.log(decoded);
             req.payload = decoded.payload;
             next();
             

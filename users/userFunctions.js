@@ -49,12 +49,7 @@ const signInUser = asyncHandler(async(req,res)=>{
     if(user && (await bcrypt.compare(password,user.password))){
         const accessToken = jwt.sign(
             {
-            payload:
-                {
-                    username:user.username,
-                    email: user.email,
-                    id:user.id,
-                },
+               payload:{ id:user.id, email:user.email},
             },
             process.env.TOKEN,
             {expiresIn: "60m"}
@@ -67,38 +62,21 @@ const signInUser = asyncHandler(async(req,res)=>{
 });
 
 const getUser = asyncHandler(async(req,res) =>{
-    const id = req.params.id;
-
-    // Check that the user exists.
-    const user = await User.findById(id);
-    if (!user){
-        res.status(404);
-        throw new Error("User doesn't exist.");
-    }
-
-    // Return user info.
-    return res.status(200).json({_id: user.id, email: user.email});
+    return res.status(200).json(req.payload);
 });
 
 const updateUser = asyncHandler(async(req, res)=>{
-    const id = req.params.id;
+    const id = req.payload.id;
     await User.findByIdAndUpdate(id,req.body);
     const updatedUser = await User.findById(id);
     return res.status(200).json(updatedUser);
 });
 
 const deleteUser =asyncHandler(async(req, res)=>{
-    const id = req.params.id;
-
-    // Check that the user exists.
-    const user = await User.findById(id);
-    if (!user){
-        res.status(404);
-        throw new Error("User doesn't exist.");
-    }
+    const id = req.payload.id;
 
     await User.findByIdAndDelete(id);
 
-    return res.status(200).json({message:`User ${id} deleted.`});
+    return res.status(200).json({message:"Account deleted."});
 });
 module.exports={makeUser, signInUser, getUser, updateUser, deleteUser};
