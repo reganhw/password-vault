@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 const {Login, Card, Note} = require("./itemSchema");
 
 
-// Checks that a String "type" is a valid item type.
+// @desc Helper function that checks if a String "type" is a valid item type.
 const validType = (type, res) =>{
     if (!(type=="login"||type=="card"||type=="note")){
         res.status(400);
