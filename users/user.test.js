@@ -100,28 +100,33 @@ async function makeUsersGetToken(){
 describe('Valid request to getUser', function() {
     it('Displays current user', async function() {
         const path = '/api/users/account';
+        
+        // Create user and login, obtain token.
         const token =await makeUsersGetToken();
+
+        // Get user.
         await request(app).get(path).set("Authorization", "Bearer "+token)
         .expect('Content-Type', /json/).expect(200);
+
+        // Delete created user.
         await User.findOneAndDelete({email:validUsers[0].email});
     });
 });
 
-/*
-describe('Invalid requests to getUser', function() {
-it('Throws appropriate errors.', function(done) {
-    const path = '/api/users/account';
-    async.series([
-        // No header
-        cb => request(app).get(path).expect(400,cb),
-        // Invalid header
-        cb => request(app).get(path).set("Authorization", "1234").expect(400,cb),
-        // Bad token
-        cb => request(app).get(path).set("Authorization", "Bearer 1234").expect(401,cb),
-    ], done);
-});
-});
 
+describe('Invalid requests to getUser', function() {
+it('Throws appropriate errors.', async function() {
+    const path = '/api/users/account';
+  
+    // No header
+    await request(app).get(path).expect(400);
+    // Invalid header
+    await request(app).get(path).set("Authorization", "1234").expect(400);
+    // Bad token
+    await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
+    });
+});
+/*
 
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', async function() {
