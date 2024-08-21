@@ -1,7 +1,11 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("./userSchema");  
+const User = require("./userSchema");
+
+//@desc Register a user
+//@route POST /api/users/register
+//@access public
 
 const makeUser = asyncHandler(async(req,res)=>{
 
@@ -36,6 +40,10 @@ const makeUser = asyncHandler(async(req,res)=>{
     
 });
 
+//@desc Sign a user in
+//@route POST /api/users/login
+//@access public
+
 const signInUser = asyncHandler(async(req,res)=>{
     const {email, password}=req.body;
 
@@ -61,9 +69,17 @@ const signInUser = asyncHandler(async(req,res)=>{
     }
 });
 
+//@desc Get a user's description
+//@route GET /api/users/account
+//@access private
+
 const getUser = asyncHandler(async(req,res) =>{
     return res.status(200).json(req.payload);
 });
+
+//@desc Update a user's description DO SOMETHING ABOUT PASSWORD.
+//@route PUT /api/users/account
+//@access private
 
 const updateUser = asyncHandler(async(req, res)=>{
     const id = req.payload.id;
@@ -72,6 +88,9 @@ const updateUser = asyncHandler(async(req, res)=>{
     return res.status(200).json(updatedUser);
 });
 
+//@desc Delete account.
+//@route DELETE /api/users/account
+//@access private
 const deleteUser =asyncHandler(async(req, res)=>{
     const id = req.payload.id;
 
