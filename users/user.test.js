@@ -1,5 +1,4 @@
 const request = require('supertest');
-const async = require("async");
 const assert = require("assert");
 const bodyParser = require("body-parser");
 const User = require("./userSchema");
@@ -15,7 +14,7 @@ const validUsers = [
 
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
-/*
+
 describe('Valid request to makeUser', function() {
     it('Creates valid users', async function() {
         const path = '/api/users/register';
@@ -34,24 +33,22 @@ describe('Valid request to makeUser', function() {
 
 
 describe('Invalid requests to makeUser',function(){
-    it('Throws appropriate errors', function(done) {
+    it('Throws appropriate errors', async function() {
         const path = '/api/users/register';
-        async.series([
+        
             // Missing fields
-            cb => request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400, cb),
-            cb => request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400, cb),
+            await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
+            await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
             // Duplicate email
-            cb => request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(400, cb),
+            await request(app).post(path).send(validUsers[0]);
+            await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(400);
+            await User.findOneAndDelete({email:validUsers[0].email});
             // GET, PUT, DELETE requests
-            cb => request(app).get(path).expect(404, cb),
-            cb => request(app).put(path).expect(404, cb),
-            cb => request(app).delete(path).expect(404, cb),
-        ], done);
+            await request(app).get(path).expect(404);
+            await request(app).put(path).expect(404);
+            await request(app).delete(path).expect(404);
+        });
     });
-
-});
-*/
-
 
 
 describe('Valid request to signInUser', function() {
@@ -102,7 +99,7 @@ async function makeUsersGetToken(){
 
     return token;
 };
-/*
+
 
 describe('Valid request to getUser', function() {
     it('Displays current user', async function() {
@@ -166,4 +163,3 @@ describe('Invalid request to deleteUser', function() {
        
     });
 });
-*/
