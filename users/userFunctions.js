@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("./userSchema");  
 
 const makeUser = asyncHandler(async(req,res)=>{
@@ -41,9 +42,28 @@ const signInUser = asyncHandler(async(req,res)=>{
     // See if all fields are there.
     if(!email || !password){
         res.status(400);
-        throw new Error("All fields are required.");
+        throw new Error("Both fields are required.");
     }
-    return res.status(200).json({message:"User logged in."});
+
+    const user = await User.findOne({email});
+    if(user && (await bcrypt.compare(password,user.password))){
+        const accessToken = jwt.sign(
+            {
+            payload:
+                {
+                    username:user.username,
+                    email: user.email,
+                    id:user.id,
+                },
+            },
+            process.env.TOKEN,
+            {expiresIn: "60m"}
+        );
+        res.status(200).json({accessToken});
+    }else{
+        res.status(401);
+        throw new Error("Email and password do not match.");
+    }
 });
 
 const getUser = asyncHandler(async(req,res) =>{

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const jwt = require("jsonwebtoken");
 
 
-const errorHandler = (err,req,res,next)=>{
+const errorHandler =  (err,req,res,next)=>{
     const statusCode = res.statusCode ? res.statusCode: 500;
     switch (statusCode) {
         case 400:
@@ -35,12 +35,9 @@ const errorHandler = (err,req,res,next)=>{
                 stackTrace:err.stack});
             
         default:
-            console.log("No errors were found.");
             break;
     }
-    
-    
-}; 
+}
 
 
 
@@ -54,7 +51,7 @@ const validToken = asyncHandler(async(req,res,next)=>{
     let authHeader = req.headers.Authorization || req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer")){
         const token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.ACCESS_TOKEN, (err,decoded) =>{
+        jwt.verify(token, process.env.TOKEN, (err,decoded) =>{
             if(err){
                 return  res.status(401).json({ message: "Not authorised." });
             }
@@ -64,7 +61,9 @@ const validToken = asyncHandler(async(req,res,next)=>{
             
         });
     } else {
-        return res.status(400).json({message:"Invalid authorisation header."})
+        res.status(400);
+        throw new Error("Invalid authorisation header.");
+        //return res.status(400).json({message:"Invalid authorisation header."})
     }
 });
 module.exports = {errorHandler, connectDb, validToken};
