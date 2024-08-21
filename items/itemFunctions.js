@@ -11,6 +11,10 @@ const validType = (type, res) =>{
     }
 }
 
+//@desc Retrieve items.
+//@route GET /api/items or api/items?type=type
+//@access private
+
 const getManyItems = asyncHandler(async(req,res)=>{
 
     // Type given.
@@ -41,6 +45,10 @@ const getManyItems = asyncHandler(async(req,res)=>{
 }
 );
 
+//@desc Retrieve item.
+//@route GET /api/items/:itemID
+//@access private
+
 const getItem = asyncHandler(async(req,res)=>{
     const id = req.params.id;
     const Items = mongoose.connection.db.collection("items");
@@ -52,6 +60,9 @@ const getItem = asyncHandler(async(req,res)=>{
     return res.status(200).json(item);
 });
 
+//@desc Make item.
+//@route POST /api/items
+//@access private
 
 const makeItem = asyncHandler(async(req,res)=>{
     type = req.body.type;
@@ -85,6 +96,11 @@ const makeItem = asyncHandler(async(req,res)=>{
     
     return res.status(201).json(item);
 });
+
+
+//@desc Update item.
+//@route PUT /api/items/:itemID
+//@access private
 
 const updateItem = asyncHandler(async(req,res)=>{
     const id = req.params.id;
@@ -132,6 +148,10 @@ const updateItem = asyncHandler(async(req,res)=>{
     return res.status(200).json(item);
 }
 );
+
+//@desc Delete item.
+//@route DELETE /api/items/:itemID
+//@access private
 
 const deleteItem =asyncHandler(async(req,res)=>{
     let id = req.params.id;
