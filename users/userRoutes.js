@@ -7,10 +7,6 @@ router.post("/register",makeUser);
 
 router.post("/signin",signInUser);
 
+router.route("/account/:id").get(getUser).put(updateUser).delete(deleteUser);
 
-router.get("/account/:id",getUser);
-
-router.put("/account/:id", updateUser);
-
-router.delete("/account/:id", deleteUser);
 module.exports = router;
