@@ -11,38 +11,47 @@ const extraField = {email:"two@gmail.com", password:"1234", extra:"extra"};
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
 
-/*
-it('Test for /api/users/register', function(done) {
-    const path = '/api/users/register';
-    
+describe('Valid request to makeUser', function() {
+    it('Creates valid users', function(done) {
+        const path = '/api/users/register';
+        async.series([
+            // Valid request: should create valid user.
+            cb => request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(201, cb),
+            // Extra field: should create valid user.
+           // cb => request(app).post(path).send(extraField).expect('Content-Type', /json/).expect(201, cb),            
+        ], done);
+    });
 
-    async.series([
-        // Valid request: should create valid user.
-        cb => request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(201, cb),
-        // Extra field: should create valid user.
-        cb => request(app).post(path).send(extraField).expect('Content-Type', /json/).expect(201, cb),
-        // Missing fields
-        cb => request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400, cb),
-        cb => request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400, cb),
-        // Duplicate email
-        cb => request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(400, cb),
-        // Invalid requests(404)
-        cb => request(app).get(path).expect(404, cb),
-        cb => request(app).put(path).expect(404, cb),
-        cb => request(app).delete(path).expect(404, cb),
-        
-   
-    ], done);
 });
 
+/*
+describe('Invalid requests to makeUser',function(){
+    it('Throws appropriate errors', function(done) {
+        const path = '/api/users/register';
+        async.series([
+            // Missing fields
+            cb => request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400, cb),
+            cb => request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400, cb),
+            // Duplicate email
+            cb => request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(400, cb),
+            // GET, PUT, DELETE requests
+            cb => request(app).get(path).expect(404, cb),
+            cb => request(app).put(path).expect(404, cb),
+            cb => request(app).delete(path).expect(404, cb),
+        ], done);
+    });
+
+});
+
+
 */
-let accessToken;
-describe('VALID SIGN-IN', function() {
-    it('responds with an access token', async function() {
+let tokenOne;
+describe('Valid request to signInUser', function() {
+    it('Gives an access token', async function() {
       const path = '/api/users/signin';
-      const res =await request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(200)
+      await request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(200)
      .then(res => {
-           accessToken = res.body.accessToken; // set access token
+           tokenOne = res.body.accessToken; // set access token
         });
     });
   });
@@ -66,12 +75,12 @@ describe('VALID SIGN-IN', function() {
     ], done);
     });
   });
-  */
+ 
 
 describe('Valid request to getUser', function() {
 it('Displays current user', async function() {
     const path = '/api/users/account';
-    const res =await request(app).get(path).set("Authorization", "Bearer "+accessToken)
+    const res =await request(app).get(path).set("Authorization", "Bearer "+tokenOne)
     .expect('Content-Type', /json/).expect(200)
 });
 });
@@ -89,3 +98,19 @@ it('Throws appropriate errors.', function(done) {
     ], done);
 });
 });
+ */
+
+describe('Valid request to deleteUser', function() {
+    it('Deletes the current user', function(done) {
+        const path = '/api/users/account';
+        async.series([
+            // Delete user.
+            cb => request(app).delete(path).set("Authorization", "Bearer "+tokenOne)
+            .expect('Content-Type', /json/).expect(200, cb),
+            // Check subsequent login fails.
+            cb => request(app).post('/api/users/signin').send(goodPayload).expect(401, cb),          
+       
+        ], done);
+});
+});
+
