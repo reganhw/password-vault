@@ -35,5 +35,12 @@ const errorHandler = (err,req,res,next)=>{
     }
     
     
-};  
-module.exports = errorHandler;
+}; 
+
+const mongoose = require('mongoose');
+
+async function connectDb(){
+    const db = await mongoose.connect(process.env.CONNECTION_STRING).catch(error => errorHandler(error));
+    console.log ("Database name: ", db.connection.name);
+}
+module.exports = {errorHandler, connectDb};
