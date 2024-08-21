@@ -46,7 +46,7 @@ const signInUser = asyncHandler(async(req,res)=>{
     return res.status(200).json({message:"User logged in."});
 });
 
-const showUser = asyncHandler(async(req,res) =>{
+const getUser = asyncHandler(async(req,res) =>{
     const id = req.params.id;
 
     // Check that the user exists.
@@ -61,10 +61,24 @@ const showUser = asyncHandler(async(req,res) =>{
 });
 
 const updateUser = asyncHandler(async(req, res)=>{
-    return res.status(200).json({message:`User ${req.params.id} updated.`});
+    const id = req.params.id;
+    await User.findByIdAndUpdate(id,req.body);
+    const updatedUser = await User.findById(id);
+    return res.status(200).json(updatedUser);
 });
 
 const deleteUser =asyncHandler(async(req, res)=>{
-    return res.status(200).json({message:`User ${req.params.id} deleted.`});
+    const id = req.params.id;
+
+    // Check that the user exists.
+    const user = await User.findById(id);
+    if (!user){
+        res.status(404);
+        throw new Error("User doesn't exist.");
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json({message:`User ${id} deleted.`});
 });
-module.exports={makeUser, signInUser, showUser, updateUser, deleteUser};
+module.exports={makeUser, signInUser, getUser, updateUser, deleteUser};

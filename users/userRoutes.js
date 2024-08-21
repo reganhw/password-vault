@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const{makeUser, signInUser, showUser, updateUser, deleteUser}=require("./userFunctions");
+const{makeUser, signInUser, getUser, updateUser, deleteUser}=require("./userFunctions");
 
 
 router.post("/register",makeUser);
@@ -8,7 +8,7 @@ router.post("/register",makeUser);
 router.post("/signin",signInUser);
 
 
-router.get("/account/:id",showUser);
+router.get("/account/:id",getUser);
 
 router.put("/account/:id", updateUser);
 

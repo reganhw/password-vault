@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
 const {Login, Card, Note} = require("./itemSchema");
 
+
+// Checks that a String "type" is a valid item type.
 const validType = (type, res) =>{
     if (!(type=="login"||type=="card"||type=="note")){
         res.status(400);
@@ -151,4 +153,4 @@ const deleteItem =asyncHandler(async(req,res)=>{
     return res.status(200).json({message:`Deleted item with ID ${req.params.id}.`});
 });
 
-module.exports = {getManyItems, getItem, validType, makeItem, updateItem, deleteItem};
+module.exports = {validType, getManyItems, getItem,  makeItem, updateItem, deleteItem};
