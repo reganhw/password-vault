@@ -1,25 +1,33 @@
 const request = require('supertest');
 const async = require("async");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const User = require("./userSchema");
 
 const app = require("../app");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-const goodPayload = {email:"one@gmail.com", password:"1234"};
-const extraField = {email:"two@gmail.com", password:"1234", extra:"extra"};
+const validUsers = [
+    {email:"one@gmail.com", password:"1234"},
+    {email:"two@gmail.com", password:"1234", extra:"extra"}
+];
+
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
 
 describe('Valid request to makeUser', function() {
-    it('Creates valid users', function(done) {
+    it('Creates valid users', async function() {
         const path = '/api/users/register';
-        async.series([
-            // Valid request: should create valid user.
-            cb => request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(201, cb),
-            // Extra field: should create valid user.
-           // cb => request(app).post(path).send(extraField).expect('Content-Type', /json/).expect(201, cb),            
-        ], done);
+
+       // Valid request: should create valid user.
+       await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(201);
+       // Extra field: should create valid user.
+       await request(app).post(path).send(validUsers[1]).expect('Content-Type', /json/).expect(201);
+       // Delete created users.
+       await User.findOneAndDelete({email : validUsers[0].email});
+       await User.findOneAndDelete({email : validUsers[1].email});
+        
     });
 
 });
@@ -33,7 +41,7 @@ describe('Invalid requests to makeUser',function(){
             cb => request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400, cb),
             cb => request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400, cb),
             // Duplicate email
-            cb => request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(400, cb),
+            cb => request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(400, cb),
             // GET, PUT, DELETE requests
             cb => request(app).get(path).expect(404, cb),
             cb => request(app).put(path).expect(404, cb),
@@ -44,19 +52,21 @@ describe('Invalid requests to makeUser',function(){
 });
 
 
-*/
+
 let tokenOne;
 describe('Valid request to signInUser', function() {
     it('Gives an access token', async function() {
       const path = '/api/users/signin';
-      await request(app).post(path).send(goodPayload).expect('Content-Type', /json/).expect(200)
+      await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(200)
      .then(res => {
            tokenOne = res.body.accessToken; // set access token
         });
+       //await User.findOneAndDelete({email:validUsers[0].email});
     });
   });
 
-  /*
+
+  
   describe('INVALID SIGN-IN', function() {
     it('throws appropriate errors', function(done) {
       const path = '/api/users/signin';
@@ -98,7 +108,7 @@ it('Throws appropriate errors.', function(done) {
     ], done);
 });
 });
- */
+
 
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', function(done) {
@@ -108,7 +118,7 @@ describe('Valid request to deleteUser', function() {
             cb => request(app).delete(path).set("Authorization", "Bearer "+tokenOne)
             .expect('Content-Type', /json/).expect(200, cb),
             // Check subsequent login fails.
-            cb => request(app).post('/api/users/signin').send(goodPayload).expect(401, cb),          
+            cb => request(app).post('/api/users/signin').send(validUsers[0]).expect(401, cb),          
        
         ], done);
 });
@@ -130,3 +140,4 @@ describe('Invalid request to deleteUser', function() {
 });
 
 
+ */
