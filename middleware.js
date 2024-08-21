@@ -47,7 +47,6 @@ async function connectDb(){
 }
 
 const validToken = asyncHandler(async(req,res,next)=>{
-    //let token;
     let authHeader = req.headers.Authorization || req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer")){
         const token = authHeader.split(" ")[1];
@@ -56,13 +55,13 @@ const validToken = asyncHandler(async(req,res,next)=>{
                 return  res.status(401).json({ message: "Not authorised." });
             }
             req.payload = decoded.payload;
+            console.log("Token validated.");
             next();
             
         });
     } else {
         res.status(400);
         throw new Error("Invalid authorisation header.");
-        //return res.status(400).json({message:"Invalid authorisation header."})
     }
 });
 module.exports = {errorHandler, connectDb, validToken};
