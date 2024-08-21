@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const{makeUser, loginUser, showUser, updateUser, deleteUser}=require("./userController");
+const{makeUser, signInUser, showUser, updateUser, deleteUser}=require("./userController");
 
 
 router.post("/register",makeUser);
 
-router.post("/login",loginUser);
+router.post("/signin",signInUser);
 
 
 router.get("/account/:id",showUser);

@@ -3,13 +3,17 @@ const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
     email:{
         type: String,
-        required: [true, "Please add an email."],
-        unique: [true, "An account with this email address already exists."],
+        required: true,
+        unique: true,
     },
     password:{
         type: String,
-        required: [true, "Please add a password."],
+        required: true,
     },
+    folders:{
+        type:[String],
+        default:["default"],
+    }
 },
 {
     timestamps: true,

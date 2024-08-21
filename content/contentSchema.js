@@ -1,35 +1,51 @@
 const mongoose = require("mongoose");
 
 const loginSchema = mongoose.Schema({
-    /*
-    user_id:{
+
+    title:{
         type: String,
-        required: [true, "Please add associated user."],
-    },
-    */
-    name:{
-        type: String,
-        required: [true, "Please add the name of the object."],
+        required: true,
     },
 
     username:{
         type:String,
+        default:"",
+
     },
     email:{
         type:String,
+        default:"",
+        
     },
     password:{
         type:String,
+        default:"",
+        
 
     },
     comments:{
         type:String,
+        default:"",
+    
     },
-    type:"login",
+    type:{
+        type:String,
+        required:true,
+    },
+    folder:{
+        type:String,
+        required:true,
+        default:"default"
+    }
+   
 },
+{ 
+    collection: 'items'
+ },
 {
-    timestamps: true,
-});
+    timestamps: true
+},
+);
 
 const cardSchema = mongoose.Schema({
     /*
@@ -38,33 +54,54 @@ const cardSchema = mongoose.Schema({
         required: [true, "Please add associated user."],
     },
     */
-    name:{
+    title:{
         type: String,
-        required: [true, "Please add the name of the object."],
+        required: [true, "Please add the title of the object."],
+        
     },
 
     cardNumber:{
         type:String, // Change to number?
+        default:"",
+        
     },
     
     CVV:{
-        type:Number,
+        type:String, // Change to number?
+        default:"",
+        
     },
     expiryDate:{
-        month: Number,
-        year: Number,
+        month:{type: Number, default: 0},
+        year: {type:Number, default:0},
+        
     },
     PIN:{
-        type:Number,
+        type:String, // Change to number?
+        default:"",
+        
     },
     comments:{
-        type:String,
+        type:String, 
+        default:"",
     },
-    type: "card",
+    type:{
+        type:String,
+        required:true,
+    },
+    folder:{
+        type:String,
+        required:true,
+        default:"default"
+    }
+},
+{ 
+    collection: 'items' 
 },
 {
-    timestamps: true,
-});
+    timestamps: true
+},
+);
 
 const noteSchema = mongoose.Schema({
     /*
@@ -73,18 +110,31 @@ const noteSchema = mongoose.Schema({
         required: [true, "Please add associated user."],
     },
     */
-    name:{
+    title:{
         type: String,
-        required: [true, "Please add the name of the object."],
+        required: [true, "Please add the title of the object."],
     },
     comments:{
         type:String,
+        default:""
     },
-    type:"note",
+    type:{
+        type:String,
+        required:true,
+    },
+    folder:{
+        type:String,
+        required:true,
+        default:"default",
+    }
+},
+{ 
+    collection: 'items' 
 },
 {
-    timestamps: true,
-});
+    timestamps:true
+
+},);
 
 const Login = mongoose.model("Login", loginSchema);
 const Card = mongoose.model("Card", cardSchema);
