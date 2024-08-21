@@ -137,21 +137,17 @@ describe('Valid request to deleteUser', function() {
 });
 });
 
-/*
+
 describe('Invalid request to deleteUser', function() {
-    it('Throws appropriate errors', function(done) {
+    it('Throws appropriate errors', async function() {
         const path = '/api/users/account';
-        async.series([
+        
         // No header
-        cb => request(app).delete(path).expect(400,cb),
+        await request(app).delete(path).expect(400),
         // Invalid header
-        cb => request(app).delete(path).set("Authorization", "1234").expect(400,cb),
+        await request(app).delete(path).set("Authorization", "1234").expect(400),
         // Bad token
-        cb => request(app).delete(path).set("Authorization", "Bearer 1234").expect(401,cb),   
+        await request(app).delete(path).set("Authorization", "Bearer 1234").expect(401);   
        
-        ], done);
+    });
 });
-});
-
-
-*/
