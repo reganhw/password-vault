@@ -1,21 +1,8 @@
 const mongoose = require('mongoose');
-/*
-const connectDb = async() =>{
-    try{
-        const connect = await mongoose.connect(process.env.CONNECTION_STRING);
-        console.log("Database connected: ",
-            connect.connection.host,
-            connect.connection.name
-        );
-    }catch(err){
-        console.log(err);
-        process.exit(1);
-    }
-};
-*/
+const errorHandler = require("./errorHandler");
 
 async function connectDb(){
-    const db = await mongoose.connect(process.env.CONNECTION_STRING).catch(error => handleError(error));
+    const db = await mongoose.connect(process.env.CONNECTION_STRING).catch(error => errorHandler(error));
     console.log ("Database name: ", db.connection.name);
 }
 module.exports = connectDb;

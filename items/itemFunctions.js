@@ -2,24 +2,16 @@ const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
 const {Login, Card, Note} = require("./itemSchema");
 
-
-const getItem = asyncHandler(async(req,res)=>{
-    const id = req.query.id;
-    const Items = mongoose.connection.db.collection("items");
-
-    // ID exists.
-    if(id){
-        
-        const item = await Items.findOne({_id:new mongoose.Types.ObjectId(id)});
-        if(!item){
-            res.status(404);
-            throw new Error ("An item with that ID does not exist.");
-        }
-        return res.status(200).json(item);
+const validType = (type, res) =>{
+    if (!(type=="login"||type=="card"||type=="note")){
+        res.status(400);
+        throw new Error("Invalid item type.");
     }
+}
 
+const getManyItems = asyncHandler(async(req,res)=>{
 
-    // No ID, type exists.
+    // Type given.
     const type = req.query.type;
     if(type){
         validType(type, res);
@@ -41,19 +33,25 @@ const getItem = asyncHandler(async(req,res)=>{
         return res.status(200).json(results);
     }
 
-    // No ID, no type.
+    // No type.
     const allItems = await Note.find({}); // For some reason, this finds the logins and cards too.
     return res.status(200).json(allItems);
 }
 );
-const validType = (type, res) =>{
-    if (!(type=="login"||type=="card"||type=="note")){
-        res.status(400);
-        throw new Error("Invalid item type.");
-    }
-}
 
-const makeItem =asyncHandler(async(req,res)=>{
+const getItem = asyncHandler(async(req,res)=>{
+    const id = req.params.id;
+    const Items = mongoose.connection.db.collection("items");
+    const item = await Items.findOne({_id:new mongoose.Types.ObjectId(id)});
+    if(!item){
+        res.status(404);
+        throw new Error ("An item with that ID does not exist.");
+    }
+    return res.status(200).json(item);
+});
+
+
+const makeItem = asyncHandler(async(req,res)=>{
     type = req.body.type;
 
     // Check that type is set.
@@ -87,7 +85,7 @@ const makeItem =asyncHandler(async(req,res)=>{
 });
 
 const updateItem = asyncHandler(async(req,res)=>{
-    const id = req.query.id;
+    const id = req.params.id;
     // Ensure ID is provided.
     if (!id){
         res.status(400);
@@ -134,13 +132,13 @@ const updateItem = asyncHandler(async(req,res)=>{
 );
 
 const deleteItem =asyncHandler(async(req,res)=>{
-    let id = req.query.id;
+    let id = req.params.id;
     if (!id){
         res.status(400);
         throw new Error("Please provide the ID of the item to delete.");
     }
 
-    id = new mongoose.Types.ObjectId(req.query.id);
+    id = new mongoose.Types.ObjectId(req.params.id);
 
     const Items = mongoose.connection.db.collection("items");
     const item = await Items.findOne({_id:id});
@@ -150,7 +148,7 @@ const deleteItem =asyncHandler(async(req,res)=>{
     }
     await Items.findOneAndDelete({_id:id});
    
-    return res.status(200).json({message:`Deleted item with ID ${req.query.id}.`});
+    return res.status(200).json({message:`Deleted item with ID ${req.params.id}.`});
 });
 
-module.exports = {getItem, validType, makeItem, updateItem, deleteItem};
+module.exports = {getManyItems, getItem, validType, makeItem, updateItem, deleteItem};

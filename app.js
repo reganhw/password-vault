@@ -3,7 +3,6 @@ const dotenv = require("dotenv").config();
 const errorHandler = require("./errorHandler");
 const mongoose = require("mongoose");
 const connectDb = require("./connectDb");
-const {Login,Card} = require("./items/itemSchema");
 
 
 connectDb();
@@ -17,7 +16,7 @@ app.use("/api/items", require("./items/itemRoutes"));
 app.use("/api/folders", require("./folders/folderRoutes"));
 app.use(errorHandler);
 app.listen(port, () =>{
-    console.log(`Server running on port ${port}.`);
+    console.log(`Server up.`);
 });
 
 module.exports = app;

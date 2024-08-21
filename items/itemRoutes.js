@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const{getItem, makeItem, updateItem, deleteItem}=require("./itemFunctions");
+const{getManyItems,getItem, makeItem, updateItem, deleteItem}=require("./itemFunctions");
 
-router.route("/").get(getItem).post(makeItem).put(updateItem).delete(deleteItem);
+router.route("/").get(getManyItems).post(makeItem);
+router.route("/:id").get(getItem).put(updateItem).delete(deleteItem);
 
 module.exports = router;
