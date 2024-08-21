@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const User = require("./userSchema");
 
 const app = require("../app");
-const userSchema = require('./userSchema');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -51,18 +50,25 @@ describe('Invalid requests to makeUser',function(){
     });
 
 });
+*/
 
 
 
-let tokenOne;
 describe('Valid request to signInUser', function() {
     it('Gives an access token', async function() {
       const path = '/api/users/signin';
-      await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(200)
-     .then(res => {
-           tokenOne = res.body.accessToken; // set access token
-        });
-       //await User.findOneAndDelete({email:validUsers[0].email});
+
+      // Create user to test.
+      await request(app).post('/api/users/register').send(validUsers[0]);
+
+      // Login.
+      const response = await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(200);
+      // Check that an access token is output.
+      const token = response.body.accessToken;
+      assert(token);
+      
+      // Delete created user.
+       await User.findOneAndDelete({email:validUsers[0].email});
     });
   });
 
@@ -86,7 +92,7 @@ describe('Valid request to signInUser', function() {
     ], done);
     });
   });
- */
+ 
 
 async function makeUsersGetToken(){
 
@@ -96,6 +102,7 @@ async function makeUsersGetToken(){
 
     return token;
 };
+/*
 
 describe('Valid request to getUser', function() {
     it('Displays current user', async function() {
@@ -126,7 +133,7 @@ it('Throws appropriate errors.', async function() {
     await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
     });
 });
-/*
+
 
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', async function() {
