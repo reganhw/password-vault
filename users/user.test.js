@@ -1,11 +1,8 @@
 const request = require('supertest');
 const assert = require("assert");
-const bodyParser = require("body-parser");
 const User = require("./userSchema");
 
 const app = require("../app");
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
 
 const validUsers = [
     {email:"one@gmail.com", password:"1234"},
