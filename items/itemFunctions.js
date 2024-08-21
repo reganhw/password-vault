@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
-const {Login, Card, Note} = require("./contentSchema");
+const {Login, Card, Note} = require("./itemSchema");
 
 
-const getContent = asyncHandler(async(req,res)=>{
+const getItem = asyncHandler(async(req,res)=>{
     const id = req.query.id;
     const Items = mongoose.connection.db.collection("items");
 
@@ -49,11 +49,11 @@ const getContent = asyncHandler(async(req,res)=>{
 const validType = (type, res) =>{
     if (!(type=="login"||type=="card"||type=="note")){
         res.status(400);
-        throw new Error("Invalid content type.");
+        throw new Error("Invalid item type.");
     }
 }
 
-const makeContent =asyncHandler(async(req,res)=>{
+const makeItem =asyncHandler(async(req,res)=>{
     type = req.body.type;
 
     // Check that type is set.
@@ -86,7 +86,7 @@ const makeContent =asyncHandler(async(req,res)=>{
     return res.status(201).json(item);
 });
 
-const updateContent = asyncHandler(async(req,res)=>{
+const updateItem = asyncHandler(async(req,res)=>{
     const id = req.query.id;
     // Ensure ID is provided.
     if (!id){
@@ -133,11 +133,11 @@ const updateContent = asyncHandler(async(req,res)=>{
 }
 );
 
-const deleteContent =asyncHandler(async(req,res)=>{
+const deleteItem =asyncHandler(async(req,res)=>{
     let id = req.query.id;
     if (!id){
         res.status(400);
-        throw new Error("Please provide the ID of the content to delete.");
+        throw new Error("Please provide the ID of the item to delete.");
     }
 
     id = new mongoose.Types.ObjectId(req.query.id);
@@ -150,7 +150,7 @@ const deleteContent =asyncHandler(async(req,res)=>{
     }
     await Items.findOneAndDelete({_id:id});
    
-    return res.status(200).json({message:`Deleted content with ID ${req.query.id}.`});
+    return res.status(200).json({message:`Deleted item with ID ${req.query.id}.`});
 });
 
-module.exports = {getContent, validType, makeContent, updateContent, deleteContent};
+module.exports = {getItem, validType, makeItem, updateItem, deleteItem};

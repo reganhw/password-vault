@@ -1,4 +1,4 @@
-const {getContent, validType} = require("../content/contentController");
+const {getItem, validType} = require("../items/itemFunctions");
 
 //GET CASES:
 //  ("api/folders"): Retrieve all folders.
@@ -19,7 +19,7 @@ const getFolder = (req,res)=>{
     }
 
     if(id){
-        return getContent(req,res);
+        return getItem(req,res);
     }
 
     if(type){
