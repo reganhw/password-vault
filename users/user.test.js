@@ -67,4 +67,25 @@ describe('VALID SIGN-IN', function() {
     });
   });
   */
- 
+
+describe('Valid request to getUser', function() {
+it('Displays current user', async function() {
+    const path = '/api/users/account';
+    const res =await request(app).get(path).set("Authorization", "Bearer "+accessToken)
+    .expect('Content-Type', /json/).expect(200)
+});
+});
+
+describe('Invalid requests to getUser', function() {
+it('Throws appropriate errors.', function(done) {
+    const path = '/api/users/account';
+    async.series([
+        // No header
+        cb => request(app).get(path).expect(400,cb),
+        // Invalid header
+        cb => request(app).get(path).set("Authorization", "1234").expect(400,cb),
+        // Bad token
+        cb => request(app).get(path).set("Authorization", "Bearer 1234").expect(401,cb),
+    ], done);
+});
+});
