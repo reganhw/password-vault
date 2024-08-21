@@ -74,22 +74,22 @@ describe('Valid request to signInUser', function() {
 
 
   
-  describe('INVALID SIGN-IN', function() {
-    it('throws appropriate errors', function(done) {
+  describe('Invalid requests to signInUser', function() {
+    it('Throws appropriate errors', async function() {
       const path = '/api/users/signin';
-      async.series([
+      
         // Missing fields
-        cb => request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400, cb),
-        cb => request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400, cb),
+        await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
+        await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
         // Email and Password don't match
-        cb => request(app).post(path).send({email:"one@gmail.com",password:"12345"}).expect('Content-Type', /json/).expect(401, cb),
+        await request(app).post(path).send(validUsers[0]);
+        await request(app).post(path).send({email:"one@gmail.com",password:"12345"})
+        .expect('Content-Type', /json/).expect(401);
+        await User.findOneAndDelete({email:validUsers[0].email});
         // Invalid requests(404)
-        cb => request(app).get(path).expect(404, cb),
-        cb => request(app).put(path).expect(404, cb),
-        cb => request(app).delete(path).expect(404, cb),
-        
-   
-    ], done);
+        await request(app).get(path).expect(404);
+        await request(app).put(path).expect(404);
+        await request(app).delete(path).expect(404);
     });
   });
  
