@@ -1,6 +1,6 @@
 const request = require('supertest');
 const async = require("async");
-const mongoose = require("mongoose");
+const assert = require("assert");
 const bodyParser = require("body-parser");
 const User = require("./userSchema");
 
@@ -123,27 +123,17 @@ async function makeUsersGetToken(){
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', async function() {
        const path = '/api/users/account';
-       const token = await makeUsersGetToken();
-       console.log(token);
-       await User.findOneAndDelete({email:validUsers[0].email});
-       
-        /*
-        await request(app).delete(path).set("Authorization", "Bearer "+token)
-        .expect('Content-Type', /json/).expect(200);
-        */
 
+       // Make a user and get a token.
+       const token = await makeUsersGetToken();
        
-        /*
-         
-        async.series([
-            // Delete user.
-            cb => request(app).delete(path).set("Authorization", "Bearer "+tokenOne)
-            .expect('Content-Type', /json/).expect(200, cb),
-            // Check subsequent login fails.
-            cb => request(app).post('/api/users/signin').send(validUsers[0]).expect(401, cb),          
-       
-        ], done);
-        */
+       // Delete.
+       await request(app).delete(path).set("Authorization", "Bearer "+token)
+       .expect('Content-Type', /json/).expect(200);
+
+       // Check that the user was deleted.
+       const user = await User.exists({email:validUsers[0].email});
+       assert.equal(user,null);
 });
 });
 
