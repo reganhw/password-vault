@@ -66,9 +66,14 @@ const updateFolder = asyncHandler(async(req,res)=>{
     return res.status(200).json({message:`Folder ${newName} updated.`});
 });
 
-const deleteFolder = (req,res)=>{
+const deleteFolder = asyncHandler(async(req,res)=>{
     const folderName=req.params.folderName;
-
+    if(folderName=="default"){
+        res.status(400);
+        throw new Error("The default folder can't be deleted.");
+    }
+    await User.updateOne({_id:req.payload.id}, {$pull:{folders:folderName}});
+    /*
     const {action} = req.body;
     // Ask user whether to delete everything or migrate content.
     if (!action) {
@@ -91,6 +96,9 @@ const deleteFolder = (req,res)=>{
             res.status(400);
             throw new Error("Invalid action specified.");
     }
+   */
+  return res.status(200).json("Folder deleted.");
 }
+);
 
 module.exports={getAllFolders, getFolderContent, makeFolder, updateFolder, deleteFolder};
