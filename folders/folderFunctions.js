@@ -67,38 +67,55 @@ const updateFolder = asyncHandler(async(req,res)=>{
 });
 
 const deleteFolder = asyncHandler(async(req,res)=>{
+    const userId = req.payload.id;
     const folderName=req.params.folderName;
     if(folderName=="default"){
         res.status(400);
         throw new Error("The default folder can't be deleted.");
     }
-    await User.updateOne({_id:req.payload.id}, {$pull:{folders:folderName}});
-    /*
+    
     const {action} = req.body;
     // Ask user whether to delete everything or migrate content.
     if (!action) {
         return res.status(200).json({
-            message: "Are you sure you want to delete this folder?",
+            message: "Option for the items in the folder.",
             options: [
-                "Delete folder and all its contents.",
-                "Delete folder and migrate contents elsewhere."
+                "delete-all",
+                "keep-content"
             ]
         });
     }
 
     // Perform the action based on the user's decision.
+    let message;
     switch (action) {
         case "delete-all":
-            return res.status(200).json({ message: `Folder ${folderName} and its contents have been deleted.`});
-        case "preserve-content":
-            return res.status(200).json({message: `Folder ${folderName} was deleted and its contents were migrated.`});
+            deleteContent(userId, folderName);
+            message= `Folder ${folderName} and all its contents were deleted.`;
+            break;
+        case "keep-content":
+            keepContent(userId, folderName);
+            message= `Folder ${folderName} was deleted and its contents were migrated to \"default \".`;
+            break;
         default:
             res.status(400);
             throw new Error("Invalid action specified.");
     }
-   */
-  return res.status(200).json("Folder deleted.");
-}
+    await User.updateOne({_id:userId}, {$pull:{folders:folderName}});
+    return res.status(200).json({message: message});
+    }
 );
+
+const deleteContent = asyncHandler(async(userId,folderName)=>{
+    const Items = mongoose.connection.db.collection("items");
+    await Items.deleteMany({folder:folderName, userId});
+
+});
+
+const keepContent = asyncHandler(async(userId,folderName)=>{
+    const Items = mongoose.connection.db.collection("items");
+    await Items.updateMany({folder:folderName, userId}, {$set:{folder:"default"}});
+
+});
 
 module.exports={getAllFolders, getFolderContent, makeFolder, updateFolder, deleteFolder};
