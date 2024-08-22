@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const loginSchema = mongoose.Schema({
+    user_id:{
+        type: String,
+        required: [true, "Please add associated user."],
+    },
 
     title:{
         type: String,
@@ -48,12 +52,12 @@ const loginSchema = mongoose.Schema({
 );
 
 const cardSchema = mongoose.Schema({
-    /*
+    
     user_id:{
         type: String,
         required: [true, "Please add associated user."],
     },
-    */
+    
     title:{
         type: String,
         required: [true, "Please add the title of the object."],
@@ -104,12 +108,12 @@ const cardSchema = mongoose.Schema({
 );
 
 const noteSchema = mongoose.Schema({
-    /*
+    
     user_id:{
         type: String,
         required: [true, "Please add associated user."],
     },
-    */
+    
     title:{
         type: String,
         required: [true, "Please add the title of the object."],

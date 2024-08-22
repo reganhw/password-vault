@@ -16,7 +16,7 @@ const validType = (type, res) =>{
 //@access private
 
 const getManyItems = asyncHandler(async(req,res)=>{
-
+    const userId = req.payload.id;
     // Type given.
     const type = req.query.type;
     if(type){
