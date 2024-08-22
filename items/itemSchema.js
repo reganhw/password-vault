@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const loginSchema = mongoose.Schema({
-    user_id:{
+    userId:{
         type: String,
         required: [true, "Please add associated user."],
     },
@@ -53,7 +53,7 @@ const loginSchema = mongoose.Schema({
 
 const cardSchema = mongoose.Schema({
     
-    user_id:{
+    userId:{
         type: String,
         required: [true, "Please add associated user."],
     },
@@ -109,7 +109,7 @@ const cardSchema = mongoose.Schema({
 
 const noteSchema = mongoose.Schema({
     
-    user_id:{
+    userId:{
         type: String,
         required: [true, "Please add associated user."],
     },

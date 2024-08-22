@@ -16,7 +16,7 @@ const validType = (type, res) =>{
 //@access private
 
 const getManyItems = asyncHandler(async(req,res)=>{
-    const userId = req.payload.id;
+
     // Type given.
     const type = req.query.type;
     if(type){
@@ -50,6 +50,7 @@ const getManyItems = asyncHandler(async(req,res)=>{
 //@access private
 
 const getItem = asyncHandler(async(req,res)=>{
+    const userId = req.payload.id;
     const id = req.params.id;
     const Items = mongoose.connection.db.collection("items");
     const item = await Items.findOne({_id:new mongoose.Types.ObjectId(id)});
@@ -57,17 +58,28 @@ const getItem = asyncHandler(async(req,res)=>{
         res.status(404);
         throw new Error ("An item with that ID does not exist.");
     }
+    if (item.userId !=userId){
+        res.status(401);
+        throw new Error("Unauthorised.");
+    }
     return res.status(200).json(item);
 });
 
-//@desc Make item.
+//@desc Makes an item from a request body. Required fields: userId, type.
 //@route POST /api/items
 //@access private
 
 const makeItem = asyncHandler(async(req,res)=>{
-    type = req.body.type;
-
+    
+    // Check for user ID.
+    const userId = req.payload.id;
+    if(!userId){
+        res.status(401);
+        throw new Error("The user is not logged in.");
+    }
+    console.log(userId);
     // Check that type is set.
+    const type = req.body.type;
     if(!type){
         res.status(400);
         throw new Error("A valid type must be specified.");
@@ -75,18 +87,21 @@ const makeItem = asyncHandler(async(req,res)=>{
 
     // Check that type is valid.
     validType(type, res);
-
+    
     // Create item.
-    let item;
+    const item = structuredClone(req.body);
+    item.userId = userId; // Set userId to current user's ID.
+    
+
     switch (type) {
         case "login":
-            item = await Login.create(req.body);
+            await Login.create(item);
             break;
         case "card":
-            item = await Card.create(req.body);
+            await Card.create(item);
             break;
         case "note":
-            item = await Note.create(req.body);
+            await Note.create(item);
             break;
         default:
             break;
@@ -95,6 +110,7 @@ const makeItem = asyncHandler(async(req,res)=>{
     // Add later: if the specified folder doesn't exist, create it.
     
     return res.status(201).json(item);
+    
 });
 
 
