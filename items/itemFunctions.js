@@ -16,13 +16,15 @@ const validType = (type, res) =>{
 //@access private
 
 const getManyItems = asyncHandler(async(req,res)=>{
+
+    // User validation.
     const userId = req.payload.id;
     if(!userId){
         res.status(400);
         throw new Error("The user is not logged in.");
     }
 
-    // Type given.
+    // If ?type=type
     const type = req.query.type;
     if(type){
         validType(type, res);
@@ -44,7 +46,7 @@ const getManyItems = asyncHandler(async(req,res)=>{
         return res.status(200).json(results);
     }
 
-    // No type.
+    // No type given.
     // For some reason, this finds the logins and cards too.
     const allItems = await Note.find({userId}).sort({"title":1}); 
     return res.status(200).json(allItems)
@@ -183,21 +185,26 @@ const updateItem = asyncHandler(async(req,res)=>{
 //@access private
 
 const deleteItem =asyncHandler(async(req,res)=>{
-    let id = req.params.id;
-    if (!id){
-        res.status(400);
-        throw new Error("Please provide the ID of the item to delete.");
-    }
 
-    id = new mongoose.Types.ObjectId(req.params.id);
-
+    const id = req.params.id;
+    
+    // Check that an item with the ID exists.
     const Items = mongoose.connection.db.collection("items");
-    const item = await Items.findOne({_id:id});
+    let item = await Items.findOne({_id:new mongoose.Types.ObjectId(id)});
+    
     if(!item){
         res.status(404);
-        throw new Error("An item with that ID doesn't exist.");
+        throw new Error("An item with that ID does not exist.");
     }
-    await Items.findOneAndDelete({_id:id});
+
+    // Check authorisation.
+    const userId = req.payload.id;
+    if(item.userId!=userId){
+        res.status(401);
+        throw new Error("Unauthorised.");
+    }
+
+    await Items.findOneAndDelete({_id:new mongoose.Types.ObjectId(id)});
    
     return res.status(200).json({message:`Deleted item with ID ${req.params.id}.`});
 });
