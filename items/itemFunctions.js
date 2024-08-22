@@ -87,6 +87,7 @@ const makeItem = asyncHandler(async(req,res)=>{
         throw new Error("The user is not logged in.");
     }
     console.log(userId);
+    
     // Check that type is set.
     const type = req.body.type;
     if(!type){
