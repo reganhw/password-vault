@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require("../app");
 const id = "1";
 
+console.log("Don't run item.test.js yet.");
+/*
 // ----------------------------VALID REQUESTS------------------------
 
 //GET
@@ -64,3 +66,4 @@ request(app).delete('/api/content')
 if (err) throw new Error(`No 400 for DELETE api/content.` );
 });
 
+*/

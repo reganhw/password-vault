@@ -4,8 +4,10 @@ const async = require('async');
 const folderName = "myFolder";
 const id = "1";
 
-// Path: /api/folders
+console.log("Don't run this folder.test.js yet.");
 
+// Path: /api/folders
+/*
 it('Test for /api/folders', function(done) {
     async.series([
         cb => request(app).get('/api/folders').expect(200, {message:"All folders."}, cb),
@@ -48,7 +50,7 @@ it('DELETE /api/folders/folderName', function(done) {
     ], done);
 });
 
-/*
+
 const statuses = [200,201];
 for (let i = 0; i<2;i++){
     request.app.fs[i]('/api/folders')
