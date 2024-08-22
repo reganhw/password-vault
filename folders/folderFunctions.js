@@ -50,13 +50,21 @@ const makeFolder = asyncHandler(async (req,res)=>{
     }
     
     await User.updateOne({ _id: userId },{ $push: { folders: folderName} });
-        
+    
     return res.status(201).json({message:`Folder ${folderName} successfully created.`});
 });
 
-const updateFolder = (req,res)=>{
-    return res.status(200).json({message:`Folder ${req.params.folderName} updated.`});
-}
+const updateFolder = asyncHandler(async(req,res)=>{
+    const userId = req.payload.id;
+    const oldName = req.body.oldName;
+    const newName = req.body.newName;
+    await User.updateOne({ _id: userId },{ $pull: { folders: oldName}});
+    await User.updateOne({ _id: userId },{ $push: { folders: newName}});
+
+
+
+    return res.status(200).json({message:`Folder ${newName} updated.`});
+});
 
 const deleteFolder = (req,res)=>{
     const folderName=req.params.folderName;
