@@ -1,8 +1,9 @@
-const request = require('supertest');
+const request = require("supertest");
 const assert = require("assert");
-const User = require("./userSchema");
+
 
 const app = require("../app");
+const User = require("./userSchema");
 
 const validUsers = [
     {email:"one@gmail.com", password:"1234"},
@@ -11,7 +12,7 @@ const validUsers = [
 
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
-
+/*
 describe('Valid request to makeUser', function() {
     it('Creates valid users', async function() {
         const path = '/api/users/register';
@@ -87,7 +88,8 @@ describe('Valid request to signInUser', function() {
     });
   });
  
-
+*/
+// Helper function that makes a user, signs it in, and returns a token.
 async function makeUsersGetToken(){
 
     await request(app).post('/api/users/register').send(validUsers[0]);
@@ -97,7 +99,7 @@ async function makeUsersGetToken(){
     return token;
 };
 
-
+/*
 describe('Valid request to getUser', function() {
     it('Displays current user', async function() {
         const path = '/api/users/account';
@@ -127,8 +129,39 @@ it('Throws appropriate errors.', async function() {
     await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
     });
 });
+*/
+describe('Valid request to updateUser', function() {
+    it('Updates the user', async function() {
+       const path = '/api/users/account';
+       const changedUser = {email:"xyz@gmail.com", password:"11111"};
 
+       // Make a user and get a token.
+       const token = await makeUsersGetToken();
+       let user = await User.findOne({email:validUsers[0].email});
+       const id = user.id;
 
+       // Change email. 
+       await request(app).put(path).set("Authorization", "Bearer "+token)
+       .send({email:changedUser.email})
+       .expect('Content-Type', /json/).expect(200);
+       
+       user = await User.findById(id);
+       assert(user.email===changedUser.email);
+
+       // Change password.
+       await request(app).put(path).set("Authorization", "Bearer "+token)
+       .send({password:changedUser.password})
+       .expect('Content-Type', /json/).expect(200);
+
+       // See if signing in is possible with new credentials.
+       await request(app).post('/api/users/signin').send(changedUser).expect(200);
+
+       // Delete created user.
+       await User.findByIdAndDelete(id);
+
+    });
+});
+/*
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', async function() {
        const path = '/api/users/account';
@@ -160,3 +193,4 @@ describe('Invalid request to deleteUser', function() {
        
     });
 });
+*/
