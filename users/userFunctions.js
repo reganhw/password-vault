@@ -42,7 +42,7 @@ const makeUser = asyncHandler(async(req,res)=>{
 });
 
 //@desc Sign a user in
-//@route POST /api/users/login
+//@route POST /api/users/signin
 //@access public
 
 const signInUser = asyncHandler(async(req,res)=>{

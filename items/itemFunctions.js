@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
+const User = require("../users/userSchema");
 const {Login, Card, Note} = require("./itemSchema");
 
 
@@ -86,7 +87,6 @@ const makeItem = asyncHandler(async(req,res)=>{
         res.status(400);
         throw new Error("The user is not logged in.");
     }
-    console.log(userId);
     
     // Check that type is set.
     const type = req.body.type;
@@ -118,6 +118,15 @@ const makeItem = asyncHandler(async(req,res)=>{
         
     }
     // Add later: if the specified folder doesn't exist, create it.
+
+    const folderName = item.folder;
+    if (folderName){
+        const user = await User.findById(userId);
+        const folders = user.folders;
+        if (!folders.includes(folderName)){
+            await User.updateOne({ _id: userId },{ $push: { folders: folderName} });
+        }
+    }
     
     return res.status(201).json(item);
     

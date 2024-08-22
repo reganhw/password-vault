@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const User = require("../users/userSchema");
-const {getItem, validType} = require("../items/itemFunctions");
+const validType = require("../items/itemFunctions");
 
 //GET CASES:
 //  ("api/folders"): Retrieve all folders.
@@ -60,7 +60,8 @@ const updateFolder = asyncHandler(async(req,res)=>{
     const newName = req.body.newName;
     await User.updateOne({ _id: userId },{ $pull: { folders: oldName}});
     await User.updateOne({ _id: userId },{ $push: { folders: newName}});
-
+    const Items = mongoose.connection.db.collection("items");
+    await Items.updateMany({folder:oldName, userId:userId}, {$set:{folder:newName}});
 
 
     return res.status(200).json({message:`Folder ${newName} updated.`});
@@ -74,9 +75,9 @@ const deleteFolder = asyncHandler(async(req,res)=>{
         throw new Error("The default folder can't be deleted.");
     }
     
-    const {action} = req.body;
+    const {option} = req.body;
     // Ask user whether to delete everything or migrate content.
-    if (!action) {
+    if (!option) {
         return res.status(200).json({
             message: "Option for the items in the folder.",
             options: [
@@ -86,9 +87,9 @@ const deleteFolder = asyncHandler(async(req,res)=>{
         });
     }
 
-    // Perform the action based on the user's decision.
+    // Perform the action based on option given.
     let message;
-    switch (action) {
+    switch (option) {
         case "delete-all":
             deleteContent(userId, folderName);
             message= `Folder ${folderName} and all its contents were deleted.`;
@@ -103,7 +104,7 @@ const deleteFolder = asyncHandler(async(req,res)=>{
     }
     await User.updateOne({_id:userId}, {$pull:{folders:folderName}});
     return res.status(200).json({message: message});
-    }
+  }
 );
 
 const deleteContent = asyncHandler(async(userId,folderName)=>{
