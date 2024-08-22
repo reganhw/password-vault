@@ -16,6 +16,11 @@ const validType = (type, res) =>{
 //@access private
 
 const getManyItems = asyncHandler(async(req,res)=>{
+    const userId = req.payload.id;
+    if(!userId){
+        res.status(400);
+        throw new Error("User not logged in.");
+    }
 
     // Type given.
     const type = req.query.type;
@@ -129,11 +134,23 @@ const updateItem = asyncHandler(async(req,res)=>{
         res.status(404);
         throw new Error("An item with that ID does not exist.");
     }
+
+    // Check authorisation.
+    const userId = req.payload.id;
+    if(item.userId!=userId){
+        res.status(401);
+        throw new Error("Unauthorised.");
+    }
+    // Prevent user ID changing.
+    if(req.body.userId &&(req.body.userId!= userId)){
+        res.status(400);
+        throw new Error("User ID cannot be changed.");
+    }
     
     // Prevent type changing.
     if(req.body.type &&(req.body.type!=item.type) ){
         res.status(400);
-        throw new Error("You can't change the type of an item.");
+        throw new Error("The type of an item cannot be changed..");
         
     }
 

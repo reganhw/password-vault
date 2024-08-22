@@ -3,7 +3,7 @@ const router = express.Router();
 const {validToken} = require("../middleware");
 const{getManyItems,getItem, makeItem, updateItem, deleteItem}=require("./itemFunctions");
 
-router.route("/").get(getManyItems).post(validToken, makeItem);
-router.route("/:id").get(validToken, getItem).put(updateItem).delete(deleteItem);
+router.route("/").get(validToken, getManyItems).post(validToken, makeItem);
+router.route("/:id").get(validToken, getItem).put(validToken, updateItem).delete(validToken, deleteItem);
 
 module.exports = router;
