@@ -4,6 +4,6 @@ const {validToken} = require("../middleware");
 const{getManyItems,getItem, makeItem, updateItem, deleteItem}=require("./itemFunctions");
 
 router.route("/").get(getManyItems).post(validToken, makeItem);
-router.route("/:id").get(getItem).put(updateItem).delete(deleteItem);
+router.route("/:id").get(validToken, getItem).put(updateItem).delete(deleteItem);
 
 module.exports = router;

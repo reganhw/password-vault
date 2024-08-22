@@ -45,7 +45,7 @@ const getManyItems = asyncHandler(async(req,res)=>{
 }
 );
 
-//@desc Retrieve item.
+//@desc Retrieve a single item.
 //@route GET /api/items/:itemID
 //@access private
 
@@ -120,13 +120,7 @@ const makeItem = asyncHandler(async(req,res)=>{
 
 const updateItem = asyncHandler(async(req,res)=>{
     const id = req.params.id;
-    // Ensure ID is provided.
-    if (!id){
-        res.status(400);
-        throw new Error("Please provide the ID of the item to update.");
-    }
-
-
+    
     // Check that an item with the ID exists.
     const Items = mongoose.connection.db.collection("items");
     let item = await Items.findOne({_id:new mongoose.Types.ObjectId(id)});
