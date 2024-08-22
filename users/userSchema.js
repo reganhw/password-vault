@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
     folders:{
         type:[String],
         default:["default"],
+        uniqueItems: true,
     }
 },
 {

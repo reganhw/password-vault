@@ -11,11 +11,6 @@ const {getItem, validType} = require("../items/itemFunctions");
 const getAllFolders =asyncHandler(async(req,res)=>{
     // User validation.
     const userId = req.payload.id;
-    if(!userId){
-        res.status(400);
-        throw new Error("The user is not logged in.");
-    }
-
     const user = await User.findById(userId);
     return res.status(200).json(user.folders);
 }
@@ -43,9 +38,21 @@ const getFolderContent = asyncHandler (async(req,res)=>{
 }
 );
 
-const makeFolder = (req,res)=>{
-    return res.status(201).json({message:"Folder successfully created."});
-}
+const makeFolder = asyncHandler(async (req,res)=>{
+    const userId = req.payload.id;
+    const folderName = req.body.folderName;
+
+    const user = await User.findById(userId);
+    const folders = user.folders;
+    if (folders.includes(folderName)){
+        res.status(400);
+        throw new Error(`Folder ${folderName} already exists.`);
+    }
+    
+    await User.updateOne({ _id: userId },{ $push: { folders: folderName} });
+        
+    return res.status(201).json({message:`Folder ${folderName} successfully created.`});
+});
 
 const updateFolder = (req,res)=>{
     return res.status(200).json({message:`Folder ${req.params.folderName} updated.`});
