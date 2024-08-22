@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./userSchema");
@@ -98,7 +99,10 @@ const updateUser = asyncHandler(async(req, res)=>{
 //@access private
 const deleteUser =asyncHandler(async(req, res)=>{
     const id = req.payload.id;
-
+    // Delete items associated with the user.
+    const Items = mongoose.connection.db.collection("items");
+    await Items.deleteMany({userId:id});
+    // Delete user.
     await User.findByIdAndDelete(id);
 
     return res.status(200).json({message:"Account deleted."});
