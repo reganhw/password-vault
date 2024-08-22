@@ -19,7 +19,7 @@ const getManyItems = asyncHandler(async(req,res)=>{
     const userId = req.payload.id;
     if(!userId){
         res.status(400);
-        throw new Error("User not logged in.");
+        throw new Error("The user is not logged in.");
     }
 
     // Type given.
@@ -29,13 +29,13 @@ const getManyItems = asyncHandler(async(req,res)=>{
         let results;
         switch (type) {
             case "login":
-                results = await Login.find({type});
+                results = await Login.find({type, userId}).sort({"title":1});
                 break;
             case "card":
-                results = await Card.find({type});
+                results = await Card.find({type, userId}).sort({"title":1});
                 break;
             case "note":
-                results = await Note.find({type});
+                results = await Note.find({type, userId}).sort({"title":1});
                 break;
         
             default:
@@ -45,8 +45,10 @@ const getManyItems = asyncHandler(async(req,res)=>{
     }
 
     // No type.
-    const allItems = await Note.find({}); // For some reason, this finds the logins and cards too.
-    return res.status(200).json(allItems);
+    // For some reason, this finds the logins and cards too.
+    const allItems = await Note.find({userId}).sort({"title":1}); 
+    return res.status(200).json(allItems)
+    ;
 }
 );
 
@@ -79,7 +81,7 @@ const makeItem = asyncHandler(async(req,res)=>{
     // Check for user ID.
     const userId = req.payload.id;
     if(!userId){
-        res.status(401);
+        res.status(400);
         throw new Error("The user is not logged in.");
     }
     console.log(userId);
