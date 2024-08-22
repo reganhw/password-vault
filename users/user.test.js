@@ -12,7 +12,7 @@ const validUsers = [
 
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
-/*
+
 describe('Valid request to makeUser', function() {
     it('Creates valid users', async function() {
         const path = '/api/users/register';
@@ -88,7 +88,7 @@ describe('Valid request to signInUser', function() {
     });
   });
  
-*/
+
 // Helper function that makes a user, signs it in, and returns a token.
 async function makeUsersGetToken(){
 
@@ -99,7 +99,7 @@ async function makeUsersGetToken(){
     return token;
 };
 
-/*
+
 describe('Valid request to getUser', function() {
     it('Displays current user', async function() {
         const path = '/api/users/account';
@@ -129,7 +129,7 @@ it('Throws appropriate errors.', async function() {
     await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
     });
 });
-*/
+
 describe('Valid request to updateUser', function() {
     it('Updates the user', async function() {
        const path = '/api/users/account';
@@ -139,6 +139,8 @@ describe('Valid request to updateUser', function() {
        const token = await makeUsersGetToken();
        let user = await User.findOne({email:validUsers[0].email});
        const id = user.id;
+       const hashedPassword = user.password;
+       const folders = user.folders;
 
        // Change email. 
        await request(app).put(path).set("Authorization", "Bearer "+token)
@@ -146,7 +148,9 @@ describe('Valid request to updateUser', function() {
        .expect('Content-Type', /json/).expect(200);
        
        user = await User.findById(id);
-       assert(user.email===changedUser.email);
+       assert(user.email===changedUser.email); // Email was changed.
+       assert(user.password===hashedPassword); // Password was unchanged.
+       assert(user.folders.length === folders.length); // Folders were unchanged.
 
        // Change password.
        await request(app).put(path).set("Authorization", "Bearer "+token)
@@ -161,7 +165,31 @@ describe('Valid request to updateUser', function() {
 
     });
 });
-/*
+
+describe('Invalid request to updateUser', function() {
+    it('Throws appropriate errors', async function() {
+        const path = '/api/users/account';
+        
+        // No header
+        await request(app).put(path).expect(400);
+        // Invalid header
+        await request(app).put(path).set("Authorization", "1234").expect(400);
+        // Bad token
+        await request(app).put(path).set("Authorization", "Bearer 1234").expect(401);   
+       
+        // Attempt to change Id doesn't work.
+       const token = await makeUsersGetToken();
+       let user = await User.findOne({email:validUsers[0].email});
+       const id = user.id;
+       await request(app).put(path).set("Authorization", "Bearer "+token).send({_id:"111"});
+       user = await User.findOne({email:validUsers[0].email});
+       assert(user.id===id);
+       
+       // ADD duplicate email checking.
+
+    });
+});
+
 describe('Valid request to deleteUser', function() {
     it('Deletes the current user', async function() {
        const path = '/api/users/account';
@@ -193,4 +221,3 @@ describe('Invalid request to deleteUser', function() {
        
     });
 });
-*/
