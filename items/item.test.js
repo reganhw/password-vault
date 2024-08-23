@@ -46,11 +46,9 @@ it('Tests the delete items function.', async function() {
 
 
 it('Delete users made for testing.', async function() {
-
     for (let i = 0; i<n; i++){
      await request(app).delete('/api/users/account').set("Authorization", "Bearer "+tokens[i]);
     }
-     
  });
 
 /*
