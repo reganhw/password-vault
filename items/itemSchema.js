@@ -49,6 +49,7 @@ const loginSchema = mongoose.Schema({
 {
     timestamps: true
 },
+
 );
 
 const cardSchema = mongoose.Schema({
@@ -105,6 +106,7 @@ const cardSchema = mongoose.Schema({
 {
     timestamps: true
 },
+
 );
 
 const noteSchema = mongoose.Schema({
@@ -138,7 +140,8 @@ const noteSchema = mongoose.Schema({
 {
     timestamps:true
 
-},);
+},
+);
 
 const Login = mongoose.model("Login", loginSchema);
 const Card = mongoose.model("Card", cardSchema);
