@@ -1,8 +1,32 @@
 const request = require('supertest');
 const app = require("../app");
-const id = "1";
+const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "password":"1111"},
+    {"email":"2222", "password":"2222"}];
+const n = validUsers.length;
+let tokens = [];
 
 console.log("Don't run item.test.js yet.");
+
+it('Create users for testing, log them in, set tokens.', async function() {
+
+   for (let i = 0; i<n; i++){
+    await request(app).post('/api/users/register').send(validUsers[i]);
+    const signInRes =await request(app).post('/api/users/signin').send(validUsers[i]); 
+    const token = signInRes.body.accessToken;
+    tokens.push(token);
+    console.log(tokens);
+   }
+    
+});
+
+it('Delete users made for testing.', async function() {
+
+    for (let i = 0; i<n; i++){
+     await request(app).delete('/api/users/account').set("Authorization", "Bearer "+tokens[i]);
+    }
+     
+ });
+
 /*
 // ----------------------------VALID REQUESTS------------------------
 
