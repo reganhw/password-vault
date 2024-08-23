@@ -32,6 +32,7 @@ const getManyItems = asyncHandler(async(req,res)=>{
         let results;
         switch (type) {
             case "login":
+                // The type still has to be specified
                 results = await Login.find({type, userId}).sort({"title":1});
                 break;
             case "card":
@@ -48,8 +49,8 @@ const getManyItems = asyncHandler(async(req,res)=>{
     }
 
     // No type given.
-    // For some reason, this finds the logins and cards too.
-    const allItems = await Note.find({userId}).sort({"title":1}); 
+    const Items = mongoose.connection.db.collection("items");
+    const allItems = await Items.find({userId}).sort({"title":1}).toArray(); 
     return res.status(200).json(allItems)
     ;
 }
