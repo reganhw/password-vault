@@ -52,3 +52,39 @@
 - **Input:** None
 - **What it does:** Deactivates the current user's account and deletes all items created by them.
 - **What it does under the hood:** Infers the user's ID from the access token, deletes the associated _user_ document, and deletes all _item_ documents with the userId field set to the user's ID.
+
+### 2. Items
+*All of the following methods are private. It is assumed that a user is logged in, i.e. has an authentication header with an access token. The user's ID can be inferred from this token. <br><br>
+** _\_id_  refers to the database ID of an item. The user's ID is referred to as _userId_.<br><br>
+`GET /api/items`
+- **Input:** None.
+- **What it does:** Displays all items created by the current user, ordered alphabetically by title.
+- **What it does under the hood:** Retrieves all items in the database with the _userId_ field set to the current user's ID.
+
+`GET /api/items?type=[type]`
+- **Input:** None.
+- **What it does:** Displays all items of that type created by the current user, ordered alphabetically by title.
+- **What it does under the hood:** Retrieves all items in the database with the _userId_ field set to the current user's ID and the type set to the given type.
+
+`POST /api/items`
+- **Input:** A request body with {title, type} and other optional fields.
+- **What it does:** Creates an item.
+- **What it does under the hood:** Creates an _item_ document in the database. The _userId_ field is set automatically.
+
+`GET /api/items/[_id]`
+- **Input:** None.
+- **What it does:** Retrieves the item with the specified _\_id_.
+- **What it does under the hood:** It retrieves the item with the specified _\_id_ and checks if its userId field matches the current user's ID.
+
+`PUT /api/items/[_id]`
+- **Input:** A request body in JSON form.
+- **What it does:** Modifies the item with the specified _\_id_ according to the request body.
+- **What it does under the hood:** It reads the item document with the specified _\_id_ and checks if its _userId_ field matches the current user's ID. Then the document is modified. 
+
+`DELETE /api/items/[_id]`
+- **Input:** None.
+- **What it does:** Deletes the item with the given _\_id_.
+- **What it does under the hood:** It reads the item document with the specified _id and checks if its userId field matches the current user's ID. Then the document is deleted.
+
+### 3. Folders
+
