@@ -29,12 +29,12 @@
 ## API Documentation
 ### 1. Users
 `POST /api/users/register`
-- **Input:** A request body of {email, password}.
+- **Input:** A request body of { email, password }.
 - **What it does:** It registers a user with that email and password.
-- **What it does under the hood:** Given that the email wasn't already registered, it makes a document in the _usesrs_ collection of the MongoDB database. The document is of the form {_id, email, hashed password, folders}.
+- **What it does under the hood:** Given that the email wasn't already registered, it makes a document in the _usesrs_ collection of the MongoDB database. The document is of the form { _id, email, hashed password, folders }.
 
 `POST /api/users/signin`
-- **Input:** A request body of {email, password}.
+- **Input:** A request body of { email, password }.
 - **What it does:** If the user is registered, it returns an access token.
 - **What it does under the hood:** It checks whether there is a _user_ document matching the credentials given.
 
@@ -45,7 +45,7 @@
 
 `PUT /api/users/account`
 - **Input:** A request body in JSON format.
-- **What it does:**  Updates the user's information. For example if the request body is {email: "hello@gmail.com", password: "12345"}, the user's email and password change accordingly.
+- **What it does:**  Updates the user's information. For example if the request body is { email: "hello@gmail.com", password: "12345" }, the user's email and password change accordingly.
 - **What it does under the hood:** Infers the user's ID from the access token and modifies the associated _user_ document.
 
 `DELETE /api/users/account`
@@ -67,7 +67,7 @@
 - **What it does under the hood:** Retrieves all items in the database with the _userId_ field set to the current user's ID and the type set to the given type.
 
 `POST /api/items`
-- **Input:** A request body with {title, type} and other optional fields.
+- **Input:** A request body with { title, type } and other optional fields.
 - **What it does:** Creates an item.
 - **What it does under the hood:** Creates an _item_ document in the database. The _userId_ field is set automatically.
 
@@ -95,22 +95,22 @@
 - **What it does under the hood:** It retrieves the _user_ document associated with the current user's ID and displays the _folders_ string array.
 
 `POST /api/folders`
-- **Input:** A request body of _{folderName}_.
+- **Input:** A request body of _{ folderName }_.
 - **What it does:** Creates a folder with that folder name.
 - **What it does under the hood:** Retrieves the _user_ document associated with the current user's ID and appends _folderName_ to the  _folders_ string array.
 
 `PUT /api/folders`
-- **Input:** A request body of _{oldName, newName}_.
+- **Input:** A request body of _{ oldName, newName }_.
 - **What it does:** Changes the name of the given folder, oldName -> newName. 
 - **What it does under the hood:** 
   1) It retrieves the _user_ document associated with the current user's ID and appends _newName_ to the  _folders_ string array. 
   2) It deletes _oldName_ from the _folders_ string array.
-  3) It finds all _item_ documents with the properties {userId: current user's ID, folder: _oldName_} and changes the folder to _newName_.
+  3) It finds all _item_ documents with the properties { userId: current user's ID, folder: _oldName_ } and changes the folder to _newName_.
 
 `GET /api/folders/[folderName]`
 - **Input:** None.
 - **What it does:** Displays all items in the given folder, ordered alphabetically by title.
-- **What it does under the hood:** Retrieves all items with properties {userId: current user's ID, folder: _folderName_}.
+- **What it does under the hood:** Retrieves all items with properties { userId: current user's ID, folder: _folderName_ }.
 
 `DELETE /api/folders/[folderName]`
 - **Input:** Optional request body set to either { option: delete-all } or { option: keep-content }.
