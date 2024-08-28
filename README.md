@@ -23,7 +23,8 @@
 ### Folders
 - Users can organise items into folders. If a folder is unspecified, an item is stored in the "default" folder.
 - Folders can be viewed, created, updated, deleted while preserving contents, and deleted completely. 
-- Folders are not documents in a database. They're abstracted. 
+- Folders are not documents in a database. They're abstracted. Each user document has a field called "folders" which is a string array. This represents the folders the user owns. Each item document has a field "folder" which is a string. This represents the folder the item belongs in.
+- By default, an item is associated with the "default" folder.
 
 ## Add later
 
