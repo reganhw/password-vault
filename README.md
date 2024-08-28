@@ -121,8 +121,13 @@
 
 `GET /api/folders/[folderName]`
 - **Input:** None.
-- **What it does:** Displays all items in the given folder, ordered alphabetically by title.
+- **What it does:** Displays all items in _folderName_, ordered alphabetically by title.
 - **What it does under the hood:** Retrieves all items with properties { userId: current user's ID, folder: _folderName_ }.
+
+`GET /api/folders/[folderName]?type=[type]`
+- **Input:** None.
+- **What it does:** Displays all items in _folderName_ with type _type_ , ordered alphabetically by title.
+- **What it does under the hood:** Retrieves all items with properties { userId: current user's ID, folder: _folderName_, type: _type_ }.
 
 `DELETE /api/folders/[folderName]`
 - **Input:** Optional request body set to either { option: delete-all } or { option: keep-content }.
