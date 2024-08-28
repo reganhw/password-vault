@@ -118,7 +118,7 @@ const makeItem = asyncHandler(async(req,res)=>{
             break;
         
     }
-    // Add later: if the specified folder doesn't exist, create it.
+    // If the specified folder doesn't exist, create it.
 
     const folderName = item.folder;
     if (folderName){

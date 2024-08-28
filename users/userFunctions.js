@@ -37,8 +37,7 @@ const makeUser = asyncHandler(async(req,res)=>{
             email: user.email,
             password: user.password
         });
-      
-    
+
 });
 
 //@desc Sign a user in
@@ -99,12 +98,15 @@ const updateUser = asyncHandler(async(req, res)=>{
 //@access private
 const deleteUser =asyncHandler(async(req, res)=>{
     const id = req.payload.id;
+
     // Delete items associated with the user.
     const Items = mongoose.connection.db.collection("items");
     await Items.deleteMany({userId:id});
+
     // Delete user.
     await User.findByIdAndDelete(id);
 
     return res.status(200).json({message:"Account deleted."});
 });
+
 module.exports={makeUser, signInUser, getUser, updateUser, deleteUser};
