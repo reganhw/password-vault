@@ -10,7 +10,7 @@
 
 ## Objects
 ### Users
-- User documents have the structure : {_id: MongoDB Object Id, email: String, password: hashed String, folders:[String]}.
+- User documents have the structure : {_id, email, password, folders}.
 - Users can be created, signed in, viewed, updated, and deleted.
 - User documents are stored in a collection named "users".
 
