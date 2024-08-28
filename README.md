@@ -87,4 +87,41 @@
 - **What it does under the hood:** It reads the item document with the specified _id and checks if its userId field matches the current user's ID. Then the document is deleted.
 
 ### 3. Folders
+*All of the following methods are private. It is assumed that a user is logged in, i.e. has an authentication header with an access token. The user's ID can be inferred from this token. <br><br>
 
+`GET /api/folders`
+- **Input:** None.
+- **What it does:** Shows all the folders the user owns.
+- **What it does under the hood:** It retrieves the _user_ document associated with the current user's ID and displays the _folders_ string array.
+
+`POST /api/folders`
+- **Input:** A request body of _{folderName}_.
+- **What it does:** Creates a folder with that folder name.
+- **What it does under the hood:** Retrieves the _user_ document associated with the current user's ID and appends _folderName_ to the  _folders_ string array.
+
+`PUT /api/folders`
+- **Input:** A request body of _{oldName, newName}_.
+- **What it does:** Changes the name of the given folder, oldName -> newName. 
+- **What it does under the hood:** 
+  1) It retrieves the _user_ document associated with the current user's ID and appends _newName_ to the  _folders_ string array. 
+  2) It deletes _oldName_ from the _folders_ string array.
+  3) It finds all _item_ documents with the properties {userId: current user's ID, folder: _oldName_} and changes the folder to _newName_.
+
+`GET /api/folders/[folderName]`
+- **Input:** None.
+- **What it does:** Displays all items in the given folder, ordered alphabetically by title.
+- **What it does under the hood:** Retrieves all items with properties {userId: current user's ID, folder: _folderName_}.
+
+`DELETE /api/folders/[folderName]`
+- **Input:** Optional request body set to either { option: delete-all } or { option: keep-content }.
+- **What it does:**
+  - If there is no request body: Asks if the user wants to delete all contents in the folder as well.
+  - If { option: delete-all }: Deletes the folder and all content in the folder.
+  - If { option: keep-content }: Deletes the folder and migrates content to the "default" folder.
+- **What it does under the hood:**
+  - If { option: delete-all }: 
+    1) It retrieves the _user_ document associated with the current user's ID and deletes _folderName_ from the  _folders_ string array. 
+    2) It deletes all _item_ documents with the properties { userId: current user's ID, folder: _folderName_ }.
+  - If { option: keep-content }:
+    1) It retrieves the _user_ document associated with the current user's ID and deletes _folderName_ from the  _folders_ string array.
+    2) It finds all _item_ documents with the properties { userId: current user's ID, folder: _folderName_ } and changes the folder to "default".
