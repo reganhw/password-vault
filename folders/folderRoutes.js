@@ -7,8 +7,5 @@ router.route("/").get(validToken, getAllFolders).post(validToken, makeFolder).pu
 router.route("/:folderName").get(validToken, getFolderContent)
 .delete(validToken, deleteFolder);
 
-router.post("/:folderName",(req,res)=>{
-    return res.status(201).json({message: `Content created in folder ${req.params.folderName}.`});
-});
 
 module.exports = router;
