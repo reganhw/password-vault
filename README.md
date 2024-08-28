@@ -10,22 +10,33 @@
 - **app.js:** The server.
 - **middleware.js:** Contains an error handler, a DB connection function, and a token validation function.
 
-### Users
-- User documents have the structure : {_id, email, password, folders}.
+## Mongo DB Documents
+
+### 1. Users
+- User documents have the structure : { _id, email, password, folders }.
+  - _id: the Mongo DB ID of the document.
+  - email: the email used to register.
+  - password: the password used to register hashed and salted.
+  - folders: a string array of all folders the user owns.
 - Users can be created, signed in, viewed, updated, and deleted.
 - User documents are stored in a collection named "users".
 
-### Items
-- Items have a _type_ field which is a _login_ (login credentials), _card_, or a _note_. Each _type_ has a different schema.
-- Items must be associated with a user's id.
+### 2. Items
+- Items have a _type_ which is either a _login_ (login credentials), _card_, or a _note_. 
+- Each _type_ has a different Mongo DB schema, but they all have the following fields: { _id, userId, type, folder, title }.
+  - _id: the Mongo DB ID of the document.
+  - userId: the Mongo DB ID of the user that created the document. 
+  - type: described above.
+  - folder: the folder the item is in. Its set to "default" if the folder is unspecified.
 - Items can be viewed, created, updated, and deleted.
 - All items are stored in the "items" collection, regardless of their type.
 
-### Folders
-- Users can organise items into folders. If a folder is unspecified, an item is stored in the "default" folder.
+### 3. Folders
+- Users can organise items into folders. An item is stored in the "default" folder if the folder is unspecified.
+- Folders are not documents in a database. They're abstracted.
+  - Each user document has a field called "folders" which is a string array. This represents the folders the user owns.
+  - Each item document has a field "folder" which is a string. This represents the folder the item belongs in.
 - Folders can be viewed, created, updated, deleted while preserving contents, and deleted completely. 
-- Folders are not documents in a database. They're abstracted. Each user document has a field called "folders" which is a string array. This represents the folders the user owns. Each item document has a field "folder" which is a string. This represents the folder the item belongs in.
-- By default, an item is associated with the "default" folder.
 
 ## API Documentation
 ### 1. Users
