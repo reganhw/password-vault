@@ -112,9 +112,8 @@ async function makeUsersGetToken(){
 
 
 describe('Valid request to getUser', function() {
-    it('Displays current user', async function() {
-        const path = '/api/users/account';
-        
+    const path = '/api/users/account';
+    it('Displays current user', async function() {        
         // Create user and login, obtain token.
         const token =await makeUsersGetToken();
 
@@ -129,16 +128,17 @@ describe('Valid request to getUser', function() {
 
 
 describe('Invalid requests to getUser', function() {
-it('Throws appropriate errors.', async function() {
     const path = '/api/users/account';
-  
-    // No header
-    await request(app).get(path).expect(400);
-    // Invalid header
-    await request(app).get(path).set("Authorization", "1234").expect(400);
-    // Bad token
-    await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
+    it('throws 400 when no header is given.', async function(){
+        await request(app).get(path).expect(400);
     });
+    it('throws 400 when invalid header is given.', async function(){
+        await request(app).get(path).set("Authorization", "1234").expect(400);
+    });
+    it('throws 401 when bad token is given.', async function(){
+        await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
+    });
+
 });
 
 describe('Valid request to updateUser', function() {
