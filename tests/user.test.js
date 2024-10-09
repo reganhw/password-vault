@@ -142,6 +142,9 @@ describe('Invalid requests to getUser', function() {
 });
 
 describe('Valid request to updateUser', function() {
+    it('makes a user and gets a token and changes the email - prep for other tests.', async function(){
+
+    });
     it('Updates the user', async function() {
        const path = '/api/users/account';
        const changedUser = {email:"xyz@gmail.com", password:"11111"};
@@ -202,9 +205,8 @@ describe('Invalid request to updateUser', function() {
 });
 
 describe('Valid request to deleteUser', function() {
-    it('Deletes the current user', async function() {
-       const path = '/api/users/account';
-
+    const path = '/api/users/account';
+    it('performs deletion upon valid request.', async function() {
        // Make a user and get a token.
        const token = await makeUsersGetToken();
        
@@ -220,15 +222,14 @@ describe('Valid request to deleteUser', function() {
 
 
 describe('Invalid request to deleteUser', function() {
-    it('Throws appropriate errors', async function() {
-        const path = '/api/users/account';
-        
-        // No header
-        await request(app).delete(path).expect(400),
-        // Invalid header
-        await request(app).delete(path).set("Authorization", "1234").expect(400),
-        // Bad token
-        await request(app).delete(path).set("Authorization", "Bearer 1234").expect(401);   
-       
+    const path = '/api/users/account';
+    it('throws 400 when there is no header.', async function(){
+        await request(app).delete(path).expect(400);
+    });
+    it('throws 400 at invalid header.', async function(){
+        await request(app).delete(path).set("Authorization", "1234").expect(400);
+    });
+    it('throws 401 at bad token.', async function(){
+        await request(app).delete(path).set("Authorization", "Bearer 1234").expect(401);
     });
 });
