@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require("../app");
 const assert = require("assert");
 
-const {Login, Card, Note }= require("./itemSchema");
+const {Login, Card, Note }= require("../items/itemSchema");
 const User = require('../users/userSchema');
 
 const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "password":"1111"},

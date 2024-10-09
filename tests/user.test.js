@@ -3,7 +3,7 @@ const assert = require("assert");
 
 
 const app = require("../app");
-const User = require("./userSchema");
+const User = require("../users/userSchema");
 
 const validUsers = [
     {email:"one@gmail.com", password:"1234"},
