@@ -57,40 +57,44 @@ describe('Invalid requests to makeUser',function(){
 
 
 describe('Valid request to signInUser', function() {
+    const path = '/api/users/signin';
     it('Gives an access token', async function() {
-      const path = '/api/users/signin';
-
       // Create user to test.
       await request(app).post('/api/users/register').send(validUsers[0]);
-
       // Login.
       const response = await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(200);
       // Check that an access token is output.
       const token = response.body.accessToken;
       assert(token);
-      
-      // Delete created user.
-       await User.findOneAndDelete({email:validUsers[0].email});
+    // Delete created user.
+    await User.findOneAndDelete({email:validUsers[0].email});
     });
   });
 
 
   
   describe('Invalid requests to signInUser', function() {
-    it('Throws appropriate errors', async function() {
-      const path = '/api/users/signin';
-      
-        // Missing fields
+    const path = '/api/users/signin';
+    it('throws 400 when no email is given.', async function(){
         await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
+    });
+
+    it('throws 400 when no password is given.', async function(){
         await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
-        // Email and Password don't match
+    });
+    it('throws 401 when email and password do not match.', async function(){
         await request(app).post(path).send(validUsers[0]);
         await request(app).post(path).send({email:"one@gmail.com",password:"12345"})
         .expect('Content-Type', /json/).expect(401);
         await User.findOneAndDelete({email:validUsers[0].email});
-        // Invalid requests(404)
+    });
+    it('throws 404 at GET request.', async function(){
         await request(app).get(path).expect(404);
+    });
+    it('throws 404 at PUT request.', async function(){
         await request(app).put(path).expect(404);
+    });
+    it('throws 404 at DELETE request.', async function(){
         await request(app).delete(path).expect(404);
     });
   });
