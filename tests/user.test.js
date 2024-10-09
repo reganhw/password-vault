@@ -28,27 +28,32 @@ describe('Valid request to makeUser', function() {
        await User.findOneAndDelete({email : validUsers[1].email});
         
     });
-
 });
 
 
 describe('Invalid requests to makeUser',function(){
-    it('Throws appropriate errors', async function() {
-        const path = '/api/users/register';
-        
-            // Missing fields
-            await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
-            await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
-            // Duplicate email
-            await request(app).post(path).send(validUsers[0]);
-            await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(400);
-            await User.findOneAndDelete({email:validUsers[0].email});
-            // GET, PUT, DELETE requests
-            await request(app).get(path).expect(404);
-            await request(app).put(path).expect(404);
-            await request(app).delete(path).expect(404);
-        });
+    const path = '/api/users/register';
+    it('throws 400 when no email is given.', async function(){
+        await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
     });
+    it('throws 400 when no password is given.', async function(){
+        await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
+    });
+    it('throws 400 when duplicate email is given.', async function(){
+        await request(app).post(path).send(validUsers[0]);
+        await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(400);
+        await User.findOneAndDelete({email:validUsers[0].email});
+    });
+    it('throws 404 for GET request.', async function(){
+        await request(app).get(path).expect(404);
+    });
+    it('throws 404 for PUT request.', async function(){
+        await request(app).put(path).expect(404);
+    });
+    it('throws 404 for DELETE request.', async function() {
+        await request(app).delete(path).expect(404);
+    });
+});
 
 
 describe('Valid request to signInUser', function() {
