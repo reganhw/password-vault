@@ -14,15 +14,17 @@ const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
 
 describe('Valid request to makeUser', function() {
-    it('Creates valid users', async function() {
-        const path = '/api/users/register';
-
-       // Valid request: should create valid user.
+    const path = '/api/users/register';
+    it('creates a valid user upon valid input.', async function(){
+        // Valid request: should create valid user.
        await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(201);
+       // Delete created user.
+       await User.findOneAndDelete({email : validUsers[0].email});
+    });
+    it('creates a valid user upon valid input with extra field.', async function() {
        // Extra field: should create valid user.
        await request(app).post(path).send(validUsers[1]).expect('Content-Type', /json/).expect(201);
-       // Delete created users.
-       await User.findOneAndDelete({email : validUsers[0].email});
+       // Delete created user.
        await User.findOneAndDelete({email : validUsers[1].email});
         
     });
