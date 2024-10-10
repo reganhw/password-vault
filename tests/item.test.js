@@ -66,6 +66,18 @@ describe('Valid request to makeItem', function(){
     
 });
 
+describe('Invalid request to makeItem', function(){
+    const path = '/api/items';
+    it('throws 401 when user the token is bad.', async function(){
+        await request(app).post(path).send(loginData).set("Authorization", "Bearer "+"123").expect(401);
+    })
+    it('throws 400 when the type is invalid.', async function(){
+        const badLogin = {...loginData};
+        badLogin.type = "foo";
+        await request(app).post(path).send(badLogin).set("Authorization", "Bearer "+tokens[0]).expect(400);
+    });
+})
+
 describe('Valid request to deleteItem', function(){
     const path = '/api/items/';
     it('deletes items upon valid request.', async function() {
