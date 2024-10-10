@@ -81,14 +81,6 @@ const getItem = asyncHandler(async(req,res)=>{
 //@access private
 
 const makeItem = asyncHandler(async(req,res)=>{
-    
-    // Check for user ID.
-    const userId = req.payload.id;
-    if(!userId){
-        res.status(400);
-        throw new Error("The user is not logged in.");
-    }
-    
     // Check that type is set.
     const type = req.body.type;
     if(!type){
