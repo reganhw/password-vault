@@ -101,7 +101,7 @@ describe('Valid request to signInUser', function() {
  
 
 // Helper function that makes a user, signs it in, and returns a token.
-async function makeUsersGetToken(){
+async function makeUserGetToken(){
 
     await request(app).post('/api/users/register').send(validUsers[0]);
     const response = await request(app).post('/api/users/signin').send(validUsers[0]);
@@ -115,7 +115,7 @@ describe('Valid request to getUser', function() {
     const path = '/api/users/account';
     it('Displays current user', async function() {        
         // Create user and login, obtain token.
-        const token =await makeUsersGetToken();
+        const token =await makeUserGetToken();
 
         // Get user.
         await request(app).get(path).set("Authorization", "Bearer "+token)
@@ -147,7 +147,7 @@ describe('Valid request to updateUser', function() {
        const changedUser = {email:"xyz@gmail.com", password:"11111"};
 
        // Make a user and get a token.
-       const token = await makeUsersGetToken();
+       const token = await makeUserGetToken();
        let user = await User.findOne({email:validUsers[0].email});
        const id = user.id;
        const hashedPassword = user.password;
@@ -190,7 +190,7 @@ describe('Invalid request to updateUser', function() {
     });
     it('attempt to change _id does not work.', async function(){
        // Create a user and get a token.
-       const token = await makeUsersGetToken();
+       const token = await makeUserGetToken();
        
        // Attempt to change ID.
        let user = await User.findOne({email:validUsers[0].email});
@@ -211,7 +211,7 @@ describe('Valid request to deleteUser', function() {
     const path = '/api/users/account';
     it('performs deletion upon valid request.', async function() {
        // Make a user and get a token.
-       const token = await makeUsersGetToken();
+       const token = await makeUserGetToken();
        
        // Delete.
        await request(app).delete(path).set("Authorization", "Bearer "+token)
