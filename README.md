@@ -3,12 +3,13 @@
 ### Basics
 - **Description:** This is a password vault modelled after [Bitwarden](https://bitwarden.com/). A _user_ can create an account and securely store _items_. Each _item_ is associated with a _folder_.
 - **References:** I had originally made a contact management app following [this tutorial](https://www.youtube.com/watch?v=H9M02of22z4). I made this password vault afterwards to consolidate my knowledge and add more complexity.
-- **Used:** Node.js, Express.js, Mongo DB, JWT authentication. 
+- **Used:** Node.js, Express.js, Mongo DB, JWT authentication, Mocha and Supertest for testing.
 
 ### Structure
 - **folders, items, users:** The subdirectory for each object contains a router, a functions file, tests, and MongoDB schemas.
 - **app.js:** The server.
 - **middleware.js:** Contains an error handler, a DB connection function, and a token validation function.
+- **tests:** Tests.
 
 ## Mongo DB Documents
 
