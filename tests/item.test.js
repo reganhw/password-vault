@@ -9,7 +9,7 @@ const {makeUserGetToken, deleteUserForTesting} = require("./helpers");
 const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "password":"1111"},
     {"email":"2222", "password":"2222"}];
 
-describe('Valid request to deleteItem.', function(){
+describe('Valid request to deleteItem', function(){
     const path = '/api/items/';
     it('Tests the delete items function.', async function() {
         // Make user for testing.
