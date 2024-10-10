@@ -100,19 +100,19 @@ const makeItem = asyncHandler(async(req,res)=>{
     validType(type, res);
     
     // Create item.
-    const item = structuredClone(req.body);
-    item.userId = userId; // Set userId to current user's ID.
+    const itemData = structuredClone(req.body);
+    itemData.userId = userId; // Set userId to current user's ID.
     
-
+    let item;
     switch (type) {
         case "login":
-            await Login.create(item);
+            item = await Login.create(itemData);
             break;
         case "card":
-            await Card.create(item);
+            item = await Card.create(itemData);
             break;
         case "note":
-            await Note.create(item);
+            item = await Note.create(itemData);
             break;
         default:
             break;
@@ -120,7 +120,7 @@ const makeItem = asyncHandler(async(req,res)=>{
     }
     // If the specified folder doesn't exist, create it.
 
-    const folderName = item.folder;
+    const folderName = itemData.folder;
     if (folderName){
         const user = await User.findById(userId);
         const folders = user.folders;
@@ -129,7 +129,7 @@ const makeItem = asyncHandler(async(req,res)=>{
         }
     }
     
-    return res.status(201).json(item);
+    return res.status(201).json({item});
     
 });
 

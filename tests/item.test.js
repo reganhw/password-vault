@@ -8,11 +8,14 @@ const {makeUserGetToken, deleteUserForTesting} = require("./helpers");
 
 const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "password":"1111"},
     {"email":"2222", "password":"2222"}];
-const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", username: "myusername",
-    comments: "Some comments", type:"login"
-};
-//const cardData = {title:"a card", cardNumber:"12345", CVV:"000", expiryDate:{month:10, year:2026}, type:"card"};
 let tokens = [];
+
+const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", username: "myusername",
+    comments: "Some comments", type:"login"};
+const cardData = {title:"a card", cardNumber:"12345", CVV:"000", expiryDate:{month:10, year:2026}, type:"card"};
+const noteData = {title:"a note", comments:"this is a note!", type:"note"};
+
+
 
 // Create users for testing.
 before(async function(){
@@ -21,9 +24,51 @@ before(async function(){
     }
 });
 
+describe('Valid request to makeItem', function(){
+    const path = '/api/items/';
+    let loginId;
+    let cardId;
+    let noteId;
+    it('makes a login upon valid request', async function(){
+        // Make login.
+        const login = await request(app).post(path).send(loginData).set("Authorization", "Bearer "+tokens[0]);
+        loginId = login._body.item._id;
+
+        // Check that it exists.
+        const loginRetrieved = await Login.findById(loginId);
+        assert(loginRetrieved.title==loginData.title);        
+    });
+    
+    it('makes a card upon valid request', async function(){
+        // Make card.
+        const card = await request(app).post(path).send(cardData).set("Authorization", "Bearer "+tokens[0]);
+        cardId = card._body.item._id;
+
+        // Check that it exists.
+        const cardRetrieved = await Card.findById(cardId);
+        assert(cardRetrieved.title==cardData.title);
+    });
+    it('makes a note upon valid request', async function(){
+        // Make note.
+        const note = await request(app).post(path).send(noteData).set("Authorization", "Bearer "+tokens[0]);
+        noteId = note._body.item._id;
+
+        // Check that it exists.
+        const noteRetrieved = await Note.findById(noteId);
+        assert(noteRetrieved.title==noteData.title);
+    });
+    after(async function(){
+        // Delete items.
+        await Login.findByIdAndDelete(loginId);
+        await Card.findByIdAndDelete(cardId);
+        await Note.findByIdAndDelete(noteId);
+    });
+    
+});
+
 describe('Valid request to deleteItem', function(){
     const path = '/api/items/';
-    it('Tests the delete items function.', async function() {
+    it('deletes items upon valid request.', async function() {
         // Retrieve user data.
         const userZero = await User.findOne({email:validUsers[0].email});
         const userId = userZero.id;
