@@ -10,6 +10,9 @@ const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "passwo
 const n = validUsers.length;
 let tokens = [];
 
+async function makeUsersSetTokens(){
+    
+}
 
 it('Create users for testing, log them in, set tokens.', async function() {
    for (let i = 0; i<n; i++){
