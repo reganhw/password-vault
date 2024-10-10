@@ -1,16 +1,12 @@
 const request = require("supertest");
 const assert = require("assert");
 
-
 const app = require("../app");
 const User = require("../users/userSchema");
 const {makeUserGetToken, deleteUserForTesting} = require("./helpers");
 
-const validUsers = [
-    {email:"one@gmail.com", password:"1234"},
-    {email:"two@gmail.com", password:"1234", extra:"extra"}
-];
-
+const validUser = {email:"one@gmail.com", password:"1234"};
+const extraField = {email:"two@gmail.com", password:"1234", extra:"extra"};
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
 
@@ -18,16 +14,17 @@ describe('Valid request to makeUser', function() {
     const path = '/api/users/register';
     it('creates a valid user upon valid input.', async function(){
         // Valid request: should create valid user.
-       await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(201);
+       await request(app).post(path).send(validUser).expect('Content-Type', /json/).expect(201);
        // Delete created user.
-       await deleteUserForTesting(validUsers[0]);
+       await deleteUserForTesting(validUser);
     });
+
     it('creates a valid user upon valid input with extra field.', async function() {
        // Extra field: should create valid user.
-       await request(app).post(path).send(validUsers[1]).expect('Content-Type', /json/).expect(201);
+       await request(app).post(path).send(extraField).expect('Content-Type', /json/).expect(201);
        // Delete created user.
-       await User.findOneAndDelete({email : validUsers[1].email});
-        
+       await deleteUserForTesting(extraField);
+
     });
 });
 
@@ -41,9 +38,9 @@ describe('Invalid requests to makeUser',function(){
         await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
     });
     it('throws 400 when duplicate email is given.', async function(){
-        await request(app).post(path).send(validUsers[0]);
-        await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(400);
-        await User.findOneAndDelete({email:validUsers[0].email});
+        await request(app).post(path).send(validUser);
+        await request(app).post(path).send(validUser).expect('Content-Type', /json/).expect(400);
+        await User.findOneAndDelete({email:validUser.email});
     });
     it('throws 404 for GET request.', async function(){
         await request(app).get(path).expect(404);
@@ -61,14 +58,14 @@ describe('Valid request to signInUser', function() {
     const path = '/api/users/signin';
     it('Gives an access token', async function() {
       // Create user to test.
-      await request(app).post('/api/users/register').send(validUsers[0]);
+      await request(app).post('/api/users/register').send(validUser);
       // Login.
-      const response = await request(app).post(path).send(validUsers[0]).expect('Content-Type', /json/).expect(200);
+      const response = await request(app).post(path).send(validUser).expect('Content-Type', /json/).expect(200);
       // Check that an access token is output.
       const token = response.body.accessToken;
       assert(token);
     // Delete created user.
-    await deleteUserForTesting(validUsers[0]);
+    await deleteUserForTesting(validUser);
     });
   });
 
@@ -84,10 +81,10 @@ describe('Valid request to signInUser', function() {
         await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
     });
     it('throws 401 when email and password do not match.', async function(){
-        await request(app).post(path).send(validUsers[0]);
+        await request(app).post(path).send(validUser);
         await request(app).post(path).send({email:"one@gmail.com",password:"12345"})
         .expect('Content-Type', /json/).expect(401);
-        await User.findOneAndDelete({email:validUsers[0].email});
+        await User.findOneAndDelete({email:validUser.email});
     });
     it('throws 404 at GET request.', async function(){
         await request(app).get(path).expect(404);
@@ -104,14 +101,14 @@ describe('Valid request to getUser', function() {
     const path = '/api/users/account';
     it('Displays current user', async function() {        
         // Create user and login, obtain token.
-        const token =await makeUserGetToken(validUsers[0]);
+        const token =await makeUserGetToken(validUser);
 
         // Get user.
         await request(app).get(path).set("Authorization", "Bearer "+token)
         .expect('Content-Type', /json/).expect(200);
 
         // Delete created user.
-        await deleteUserForTesting(validUsers[0]);
+        await deleteUserForTesting(validUser);
     });
 });
 
@@ -136,8 +133,8 @@ describe('Valid request to updateUser', function() {
        const changedUser = {email:"xyz@gmail.com", password:"11111"};
 
        // Make a user and get a token.
-       const token = await makeUserGetToken(validUsers[0]);
-       let user = await User.findOne({email:validUsers[0].email});
+       const token = await makeUserGetToken(validUser);
+       let user = await User.findOne({email:validUser.email});
        const id = user.id;
        const hashedPassword = user.password;
        const folders = user.folders;
@@ -179,19 +176,19 @@ describe('Invalid request to updateUser', function() {
     });
     it('attempt to change _id does not work.', async function(){
        // Create a user and get a token.
-       const token = await makeUserGetToken(validUsers[0]);
+       const token = await makeUserGetToken(validUser);
        
        // Attempt to change ID.
-       let user = await User.findOne({email:validUsers[0].email});
+       let user = await User.findOne({email:validUser.email});
        const id = user.id;
        await request(app).put(path).set("Authorization", "Bearer "+token).send({_id:"111"});
 
        // Check the ID wasn't changed.
-       user = await User.findOne({email:validUsers[0].email});
+       user = await User.findOne({email:validUser.email});
        assert(user.id===id);
 
        // Delete created user.
-       await deleteUserForTesting(validUsers[0]);
+       await deleteUserForTesting(validUser);
 
     });
 });
@@ -200,14 +197,14 @@ describe('Valid request to deleteUser', function() {
     const path = '/api/users/account';
     it('performs deletion upon valid request.', async function() {
        // Make a user and get a token.
-       const token = await makeUserGetToken(validUsers[0]);
+       const token = await makeUserGetToken(validUser);
        
        // Delete.
        await request(app).delete(path).set("Authorization", "Bearer "+token)
        .expect('Content-Type', /json/).expect(200);
 
        // Check that the user was deleted.
-       const user = await User.exists({email:validUsers[0].email});
+       const user = await User.exists({email:validUser.email});
        assert.equal(user,null);
     });
 });
