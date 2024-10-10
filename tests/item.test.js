@@ -8,6 +8,10 @@ const {makeUserGetToken, deleteUserForTesting} = require("./helpers");
 
 const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "password":"1111"},
     {"email":"2222", "password":"2222"}];
+const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", username: "myusername",
+    comments: "Some comments", type:"login"
+};
+//const cardData = {title:"a card", cardNumber:"12345", CVV:"000", expiryDate:{month:10, year:2026}, type:"card"};
 let tokens = [];
 
 // Create users for testing.
@@ -25,17 +29,16 @@ describe('Valid request to deleteItem', function(){
         const userId = userZero.id;
 
         // Create item.
-        const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", username: "myusername",
-            comments: "Some comments", type:"login", userId
-        };
-        await Login.create(loginData);
+        const login = {...loginData};
+        login.userId = userId;
+        await Login.create(login);
         // Retrieve item to get its ID.
-        const item = await Login.findOne({userId, title:loginData.title});
+        const item = await Login.findOne({userId, title:login.title});
 
         // Delete item.
         await request(app).delete(path+item.id).set("Authorization", "Bearer "+tokens[0]);
         // Check that it was deleted.
-        const deleted = await Login.findOne({userId, title:loginData.title});
+        const deleted = await Login.findOne({userId, title:login.title});
         assert(!deleted);
     });
 });
