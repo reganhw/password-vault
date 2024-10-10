@@ -2,57 +2,40 @@ const request = require('supertest');
 const app = require("../app");
 const assert = require("assert");
 
-const {Login, Card, Note }= require("../items/itemSchema");
 const User = require('../users/userSchema');
-const makeUserGetToken = require("helpers");
+const {Login, Card, Note }= require("../items/itemSchema");
+const {makeUserGetToken, deleteUserForTesting} = require("./helpers");
 
 const validUsers = [{"email":"0000", "password":"0000"},{"email":"1111", "password":"1111"},
     {"email":"2222", "password":"2222"}];
 
-/*
-const n = validUsers.length;
-let tokens = [];
+describe('Valid request to deleteItem.', function(){
+    const path = '/api/items/';
+    it('Tests the delete items function.', async function() {
+        // Make user for testing.
+        const token = await makeUserGetToken(validUsers[0]);
+        // Retrieve user data.
+        const userZero = await User.findOne({email:validUsers[0].email});
+        const userId = userZero.id;
 
-it('Create users for testing, log them in, set tokens.', async function() {
-   for (let i = 0; i<n; i++){
-    await request(app).post('/api/users/register').send(validUsers[i]);
-   }
+        // Create item.
+        const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", username: "myusername",
+            comments: "Some comments", type:"login", userId
+        };
+        await Login.create(loginData);
+        // Retrieve item to get its ID.
+        const item = await Login.findOne({userId, title:loginData.title});
+
+        // Delete item.
+        await request(app).delete(path+item.id).set("Authorization", "Bearer "+token);
+        // Check that it was deleted.
+        const deleted = await Login.findOne({userId, title:loginData.title});
+        assert(!deleted);
+
+        // Delete user made for testing.
+        await deleteUserForTesting(validUsers[0]);
+    });
 });
-
-it('Logs in users created above and gets tokens.', async function(){
-    for (let i = 0; i<n; i++){
-        const signInRes =await request(app).post('/api/users/signin').send(validUsers[i]); 
-        const token = signInRes.body.accessToken;
-        tokens.push(token);
-    }
-
-});
-*/
-
-it('Tests the delete items function.', async function() {
-    // Retrieve user data.
-    const userZero = await User.findOne({email:validUsers[0].email});
-    const userId = userZero.id;
-    // Create item.
-    const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", username: "myusername",
-        comments: "Some comments", type:"login", userId
-    };
-    await Login.create(loginData);
-    // Retrieve item to get its ID.
-    const item = await Login.findOne({userId, title:loginData.title});
-    // Delete item.
-    await request(app).delete('/api/items/'+item.id).set("Authorization", "Bearer "+tokens[0]);
-    // Check that it was deleted.
-    const deleted = await Login.findOne({userId, title:loginData.title});
-    assert(!deleted);
- });
-
-
-it('Delete users made for testing.', async function() {
-    for (let i = 0; i<n; i++){
-     await request(app).delete('/api/users/account').set("Authorization", "Bearer "+tokens[i]);
-    }
- });
 
 /*
 // ----------------------------VALID REQUESTS------------------------
