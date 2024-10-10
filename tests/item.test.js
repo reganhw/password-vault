@@ -105,7 +105,7 @@ after(async function(){
     for(let i = 0; i<validUsers.length; i++){
         await deleteUserForTesting(validUsers[i]);
     }
-})
+});
 
 /*
 // ----------------------------VALID REQUESTS------------------------
