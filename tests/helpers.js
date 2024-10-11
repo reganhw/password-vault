@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require("../app");
 const User = require('../users/userSchema');
+const {Login} = require('../items/itemSchema');
 
 //Input: 'user' in the form of {email, password}.
 //Output: creates the user in the DB and returns token.
@@ -19,4 +20,16 @@ async function deleteUserForTesting(user){
     await User.findOneAndDelete({email : user.email});
 }
 
-module.exports = {makeUserGetToken, deleteUserForTesting};
+//Input: 'user' in the form of {email, password}, loginData.
+//Output: creates the login in the DB and returns its ID.
+async function createLoginAs(userData, loginData){
+    const user = await User.findOne({email:userData.email});
+    const login = {...loginData};
+    login.userId = user.id;
+    await Login.create(login);
+    // Retrieve item to get its ID.
+    const item = await Login.findOne({userId:user.id, title:login.title});
+    return item.id;
+}
+
+module.exports = {makeUserGetToken, deleteUserForTesting, createLoginAs};
