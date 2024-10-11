@@ -10,16 +10,16 @@ const extraField = {email:"two@gmail.com", password:"1234", extra:"extra"};
 const noEmail = {password:"233"};
 const noPassword = {email:"hello@gmail.com"};
 
-describe('Valid request to makeUser', function() {
+describe('Valid request to makeUser', ()=> {
     const path = '/api/users/register';
-    it('creates a valid user upon valid input.', async function(){
+    it('creates a valid user upon valid input.', async ()=>{
         // Valid request: should create valid user.
        await request(app).post(path).send(validUser).expect('Content-Type', /json/).expect(201);
        // Delete created user.
        await deleteUserForTesting(validUser);
     });
 
-    it('creates a valid user upon valid input with extra field.', async function() {
+    it('creates a valid user upon valid input with extra field.', async ()=> {
        // Extra field: should create valid user.
        await request(app).post(path).send(extraField).expect('Content-Type', /json/).expect(201);
        // Delete created user.
@@ -29,34 +29,34 @@ describe('Valid request to makeUser', function() {
 });
 
 
-describe('Invalid requests to makeUser',function(){
+describe('Invalid requests to makeUser',()=>{
     const path = '/api/users/register';
-    it('throws 400 when no email is given.', async function(){
+    it('throws 400 when no email is given.', async ()=>{
         await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
     });
-    it('throws 400 when no password is given.', async function(){
+    it('throws 400 when no password is given.', async ()=>{
         await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
     });
-    it('throws 400 when duplicate email is given.', async function(){
+    it('throws 400 when duplicate email is given.', async ()=>{
         await request(app).post(path).send(validUser);
         await request(app).post(path).send(validUser).expect('Content-Type', /json/).expect(400);
         await User.findOneAndDelete({email:validUser.email});
     });
-    it('throws 404 for GET request.', async function(){
+    it('throws 404 for GET request.', async ()=>{
         await request(app).get(path).expect(404);
     });
-    it('throws 404 for PUT request.', async function(){
+    it('throws 404 for PUT request.', async ()=>{
         await request(app).put(path).expect(404);
     });
-    it('throws 404 for DELETE request.', async function() {
+    it('throws 404 for DELETE request.', async ()=> {
         await request(app).delete(path).expect(404);
     });
 });
 
 
-describe('Valid request to signInUser', function() {
+describe('Valid request to signInUser', ()=> {
     const path = '/api/users/signin';
-    it('Gives an access token', async function() {
+    it('Gives an access token', async ()=> {
       // Create user to test.
       await request(app).post('/api/users/register').send(validUser);
       // Login.
@@ -71,35 +71,35 @@ describe('Valid request to signInUser', function() {
 
 
   
-  describe('Invalid requests to signInUser', function() {
+  describe('Invalid requests to signInUser', ()=> {
     const path = '/api/users/signin';
-    it('throws 400 when no email is given.', async function(){
+    it('throws 400 when no email is given.', async ()=>{
         await request(app).post(path).send(noEmail).expect('Content-Type', /json/).expect(400);
     });
 
-    it('throws 400 when no password is given.', async function(){
+    it('throws 400 when no password is given.', async ()=>{
         await request(app).post(path).send(noPassword).expect('Content-Type', /json/).expect(400);
     });
-    it('throws 401 when email and password do not match.', async function(){
+    it('throws 401 when email and password do not match.', async ()=>{
         await request(app).post(path).send(validUser);
         await request(app).post(path).send({email:"one@gmail.com",password:"12345"})
         .expect('Content-Type', /json/).expect(401);
         await User.findOneAndDelete({email:validUser.email});
     });
-    it('throws 404 at GET request.', async function(){
+    it('throws 404 at GET request.', async ()=>{
         await request(app).get(path).expect(404);
     });
-    it('throws 404 at PUT request.', async function(){
+    it('throws 404 at PUT request.', async ()=>{
         await request(app).put(path).expect(404);
     });
-    it('throws 404 at DELETE request.', async function(){
+    it('throws 404 at DELETE request.', async ()=>{
         await request(app).delete(path).expect(404);
     });
   });
 
-describe('Valid request to getUser', function() {
+describe('Valid request to getUser', ()=> {
     const path = '/api/users/account';
-    it('Displays current user', async function() {        
+    it('Displays current user', async ()=> {        
         // Create user and login, obtain token.
         const token =await makeUserGetToken(validUser);
 
@@ -113,23 +113,23 @@ describe('Valid request to getUser', function() {
 });
 
 
-describe('Invalid requests to getUser', function() {
+describe('Invalid requests to getUser', ()=> {
     const path = '/api/users/account';
-    it('throws 400 when no header is given.', async function(){
+    it('throws 400 when no header is given.', async ()=>{
         await request(app).get(path).expect(400);
     });
-    it('throws 400 when invalid header is given.', async function(){
+    it('throws 400 when invalid header is given.', async ()=>{
         await request(app).get(path).set("Authorization", "1234").expect(400);
     });
-    it('throws 401 when bad token is given.', async function(){
+    it('throws 401 when bad token is given.', async ()=>{
         await request(app).get(path).set("Authorization", "Bearer 1234").expect(401);
     });
 
 });
 
-describe('Valid request to updateUser', function() {
+describe('Valid request to updateUser', ()=> {
     const path = '/api/users/account';
-    it('updates user upon valid request.', async function() {
+    it('updates user upon valid request.', async ()=> {
        const changedUser = {email:"xyz@gmail.com", password:"11111"};
 
        // Make a user and get a token.
@@ -163,18 +163,18 @@ describe('Valid request to updateUser', function() {
     });
 });
 
-describe('Invalid request to updateUser', function() {
+describe('Invalid request to updateUser', ()=> {
     const path = '/api/users/account';
-    it('throws 400 when there is no header.', async function(){
+    it('throws 400 when there is no header.', async ()=>{
         await request(app).delete(path).expect(400);
     });
-    it('throws 400 at invalid header.', async function(){
+    it('throws 400 at invalid header.', async ()=>{
         await request(app).delete(path).set("Authorization", "1234").expect(400);
     });
-    it('throws 401 at bad token.', async function(){
+    it('throws 401 at bad token.', async ()=>{
         await request(app).delete(path).set("Authorization", "Bearer 1234").expect(401);
     });
-    it('attempt to change _id does not work.', async function(){
+    it('attempt to change _id does not work.', async ()=>{
        // Create a user and get a token.
        const token = await makeUserGetToken(validUser);
        
@@ -193,9 +193,9 @@ describe('Invalid request to updateUser', function() {
     });
 });
 
-describe('Valid request to deleteUser', function() {
+describe('Valid request to deleteUser', ()=> {
     const path = '/api/users/account';
-    it('performs deletion upon valid request.', async function() {
+    it('performs deletion upon valid request.', async ()=> {
        // Make a user and get a token.
        const token = await makeUserGetToken(validUser);
        
@@ -210,15 +210,15 @@ describe('Valid request to deleteUser', function() {
 });
 
 
-describe('Invalid request to deleteUser', function() {
+describe('Invalid request to deleteUser', ()=> {
     const path = '/api/users/account';
-    it('throws 400 when there is no header.', async function(){
+    it('throws 400 when there is no header.', async ()=>{
         await request(app).delete(path).expect(400);
     });
-    it('throws 400 at invalid header.', async function(){
+    it('throws 400 at invalid header.', async ()=>{
         await request(app).delete(path).set("Authorization", "1234").expect(400);
     });
-    it('throws 401 at bad token.', async function(){
+    it('throws 401 at bad token.', async ()=>{
         await request(app).delete(path).set("Authorization", "Bearer 1234").expect(401);
     });
 });
