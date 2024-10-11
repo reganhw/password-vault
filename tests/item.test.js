@@ -22,36 +22,39 @@ before(async function(){
     for(let i = 0; i<validUsers.length; i++){
         tokens.push(await makeUserGetToken(validUsers[i]));
     }
+    console.log(tokens);
 });
 
 describe('Valid request to makeItem', function(){
-    const path = '/api/items/';
+    const path = '/api/items';
     let loginId;
     let cardId;
     let noteId;
+    
     it('makes a login upon valid request', async function(){
         // Make login.
         const login = await request(app).post(path).send(loginData).set("Authorization", "Bearer "+tokens[0]);
-        loginId = login._body.item._id;
-
+        loginId = login._body._id;
+        
         // Check that it exists.
         const loginRetrieved = await Login.findById(loginId);
-        assert(loginRetrieved.title==loginData.title);        
+        assert(loginRetrieved.title==loginData.title);    
     });
     
     it('makes a card upon valid request', async function(){
         // Make card.
         const card = await request(app).post(path).send(cardData).set("Authorization", "Bearer "+tokens[0]);
-        cardId = card._body.item._id;
+        cardId = card._body._id;
 
         // Check that it exists.
         const cardRetrieved = await Card.findById(cardId);
         assert(cardRetrieved.title==cardData.title);
     });
+    
     it('makes a note upon valid request', async function(){
         // Make note.
         const note = await request(app).post(path).send(noteData).set("Authorization", "Bearer "+tokens[0]);
-        noteId = note._body.item._id;
+        noteId = note._body._id;
 
         // Check that it exists.
         const noteRetrieved = await Note.findById(noteId);
@@ -63,6 +66,7 @@ describe('Valid request to makeItem', function(){
         await Card.findByIdAndDelete(cardId);
         await Note.findByIdAndDelete(noteId);
     });
+    
     
 });
 

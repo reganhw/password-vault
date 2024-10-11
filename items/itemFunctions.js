@@ -93,7 +93,7 @@ const makeItem = asyncHandler(async(req,res)=>{
     
     // Create item.
     const itemData = structuredClone(req.body);
-    itemData.userId = userId; // Set userId to current user's ID.
+    itemData.userId = req.payload.id; // Set userId to current user's ID.
     
     let item;
     switch (type) {
@@ -121,7 +121,7 @@ const makeItem = asyncHandler(async(req,res)=>{
         }
     }
     
-    return res.status(201).json({item});
+    return res.status(201).json(item);
     
 });
 
