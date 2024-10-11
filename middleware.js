@@ -41,7 +41,7 @@ const errorHandler =  (err,req,res,next)=>{
 
 
 
-async function connectDb(){
+const connectDb = async()=>{
     const db = await mongoose.connect(process.env.CONNECTION_STRING).catch(error => errorHandler(error));
     console.log ("Database name: ", db.connection.name);
 }
