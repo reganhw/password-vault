@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require("../app");
 const assert = require("assert");
-const path = '/api/items/';
 
 const User = require('../users/userSchema');
 const {Login, Card, Note }= require("../items/itemSchema");
@@ -16,7 +15,7 @@ const loginData = {title: "a login", email:"123@mymail.com", password:"mypw", us
 const cardData = {title:"a card", cardNumber:"12345", CVV:"000", expiryDate:{month:10, year:2026}, type:"card"};
 const noteData = {title:"a note", comments:"this is a note!", type:"note"};
 
-
+const path = '/api/items/';
 
 // Create users for testing.
 before(async ()=>{
@@ -85,7 +84,7 @@ describe('Valid request to deleteItem', ()=>{
 
         const loginId = await createLoginAs(validUsers[0],loginData);
         // Delete item.
-        await request(app).delete(path+"/"+loginId).set("Authorization", "Bearer "+tokens[0]);
+        await request(app).delete(path+loginId).set("Authorization", "Bearer "+tokens[0]);
         // Check that it was deleted.
         const deleted = await Login.findById(loginId);
         assert(!deleted);
@@ -94,17 +93,17 @@ describe('Valid request to deleteItem', ()=>{
 
 describe('Invalid request to deleteItem', ()=>{
     it('throws 400 at request with bad ID', async ()=>{
-        await request(app).delete(path+"/111").set("Authorization", "Bearer "+tokens[0]).expect(400);
+        await request(app).delete(path+"111").set("Authorization", "Bearer "+tokens[0]).expect(400);
     });
     it('throws 400 at request with non-existent item', async ()=>{
         const badId = "111111111111111111111111"
-        await request(app).delete(path+"/"+badId).set("Authorization", "Bearer "+tokens[0]).expect(404);
+        await request(app).delete(path+badId).set("Authorization", "Bearer "+tokens[0]).expect(404);
     });
     it('does not let an unauthorised user delete an item', async ()=>{
         // Create login as user0.
         const loginId = await createLoginAs(validUsers[0], loginData);
         // Try deleting as user1.
-        await request(app).delete(path+"/"+loginId).set("Authorization", "Bearer "+tokens[1]).expect(401);
+        await request(app).delete(path+loginId).set("Authorization", "Bearer "+tokens[1]).expect(401);
         // Delete item.
         await Login.findByIdAndDelete(loginId);
     });
