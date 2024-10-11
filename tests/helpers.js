@@ -24,12 +24,12 @@ async function deleteUserForTesting(user){
 //Output: creates the login in the DB and returns its ID.
 async function createLoginAs(userData, loginData){
     const user = await User.findOne({email:userData.email});
-    const login = {...loginData};
+    let login = {...loginData};
     login.userId = user.id;
     await Login.create(login);
     // Retrieve item to get its ID.
-    const item = await Login.findOne({userId:user.id, title:login.title});
-    return item.id;
+    login= await Login.findOne({userId:user.id, title:login.title});
+    return login.id;
 }
 
 module.exports = {makeUserGetToken, deleteUserForTesting, createLoginAs};
