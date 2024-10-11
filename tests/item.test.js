@@ -19,18 +19,18 @@ const noteData = {title:"a note", comments:"this is a note!", type:"note"};
 
 
 // Create users for testing.
-before(async function(){
+before(async ()=>{
     for(let i = 0; i<validUsers.length; i++){
         tokens.push(await makeUserGetToken(validUsers[i]));
     }
 });
 
-describe('Valid request to makeItem', function(){
+describe('Valid request to makeItem', ()=>{
     let loginId;
     let cardId;
     let noteId;
     
-    it('makes a login upon valid request', async function(){
+    it('makes a login upon valid request', async ()=>{
         // Make login.
         const login = await request(app).post(path).send(loginData).set("Authorization", "Bearer "+tokens[0]);
         loginId = login._body._id;
@@ -40,7 +40,7 @@ describe('Valid request to makeItem', function(){
         assert(loginRetrieved.title==loginData.title);    
     });
     
-    it('makes a card upon valid request', async function(){
+    it('makes a card upon valid request', async ()=>{
         // Make card.
         const card = await request(app).post(path).send(cardData).set("Authorization", "Bearer "+tokens[0]);
         cardId = card._body._id;
@@ -50,7 +50,7 @@ describe('Valid request to makeItem', function(){
         assert(cardRetrieved.title==cardData.title);
     });
     
-    it('makes a note upon valid request', async function(){
+    it('makes a note upon valid request', async ()=>{
         // Make note.
         const note = await request(app).post(path).send(noteData).set("Authorization", "Bearer "+tokens[0]);
         noteId = note._body._id;
@@ -59,7 +59,7 @@ describe('Valid request to makeItem', function(){
         const noteRetrieved = await Note.findById(noteId);
         assert(noteRetrieved.title==noteData.title);
     });
-    after(async function(){
+    after(async ()=>{
         // Delete items.
         await Login.findByIdAndDelete(loginId);
         await Card.findByIdAndDelete(cardId);
@@ -69,19 +69,19 @@ describe('Valid request to makeItem', function(){
     
 });
 
-describe('Invalid request to makeItem', function(){
-    it('throws 401 when user the token is bad.', async function(){
+describe('Invalid request to makeItem', ()=>{
+    it('throws 401 when user the token is bad.', async ()=>{
         await request(app).post(path).send(loginData).set("Authorization", "Bearer "+"123").expect(401);
     })
-    it('throws 400 when the type is invalid.', async function(){
+    it('throws 400 when the type is invalid.', async ()=>{
         const badLogin = {...loginData};
         badLogin.type = "foo";
         await request(app).post(path).send(badLogin).set("Authorization", "Bearer "+tokens[0]).expect(400);
     });
 })
 
-describe('Valid request to deleteItem', function(){
-    it('deletes items upon valid request.', async function() {
+describe('Valid request to deleteItem', ()=>{
+    it('deletes items upon valid request.', async ()=> {
 
         const loginId = await createLoginAs(validUsers[0],loginData);
         // Delete item.
@@ -92,15 +92,15 @@ describe('Valid request to deleteItem', function(){
     });
 });
 
-describe('Invalid request to deleteItem', function(){
-    it('throws 400 at request with bad ID', async function(){
+describe('Invalid request to deleteItem', ()=>{
+    it('throws 400 at request with bad ID', async ()=>{
         await request(app).delete(path+"/111").set("Authorization", "Bearer "+tokens[0]).expect(400);
     });
-    it('throws 400 at request with non-existent item', async function(){
+    it('throws 400 at request with non-existent item', async ()=>{
         const badId = "111111111111111111111111"
         await request(app).delete(path+"/"+badId).set("Authorization", "Bearer "+tokens[0]).expect(404);
     });
-    it('does not let an unauthorised user delete an item', async function(){
+    it('does not let an unauthorised user delete an item', async ()=>{
         // Create login as user0.
         const loginId = await createLoginAs(validUsers[0], loginData);
         // Try deleting as user1.
@@ -112,7 +112,7 @@ describe('Invalid request to deleteItem', function(){
 });
 
 // Delete users made for testing.
-after(async function(){
+after(async ()=>{
     for(let i = 0; i<validUsers.length; i++){
         await deleteUserForTesting(validUsers[i]);
     }
