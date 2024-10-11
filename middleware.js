@@ -45,6 +45,13 @@ async function connectDb(){
     const db = await mongoose.connect(process.env.CONNECTION_STRING).catch(error => errorHandler(error));
     console.log ("Database name: ", db.connection.name);
 }
+const validId = asyncHandler(async(req,res,next)=>{
+    const id = req.params.id;
+    if(id.length!=24){
+        return res.status(400).json({message:"ID must be 12 bytes."});
+    }
+    next();
+});
 
 const validToken = asyncHandler(async(req,res,next)=>{
     let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -64,4 +71,4 @@ const validToken = asyncHandler(async(req,res,next)=>{
         throw new Error("Invalid authorisation header.");
     }
 });
-module.exports = {errorHandler, connectDb, validToken};
+module.exports = {errorHandler, connectDb, validId, validToken};
